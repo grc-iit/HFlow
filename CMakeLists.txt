@@ -5,10 +5,13 @@ set(CMAKE_CXX_STANDARD 17)
 add_subdirectory(sentinel)
 include_directories(sentinel/include)
 
+add_subdirectory(scs_io_common)
+include_directories(scs_io_common/include)
+
 include_directories(src)
 include_directories(include)
 
-set(RHEA_COMMON )
+set(RHEA_COMMON include/rhea/common/configuration_manager.h include/rhea/common/data_structures.h include/rhea/common/enumerations.h include/rhea/common/error_codes.h)
 
 set(RHEA_LIB ${RHEA_COMMON} src/rhea/lib/rhea.cpp include/rhea/rhea.h)
 add_library(rhea SHARED ${RHEA_LIB})

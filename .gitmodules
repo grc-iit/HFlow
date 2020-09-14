@@ -1,3 +1,6 @@
 [submodule "sentinel"]
 	path = sentinel
 	url = https://github.com/scs-lab/sentinel.git
+[submodule "scs_io_common"]
+	path = scs_io_common
+	url = https://github.com/scs-lab/scs_io_common.git
