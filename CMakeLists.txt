@@ -12,12 +12,15 @@ include_directories(scs_io_common/include)
 include_directories(src)
 include_directories(include)
 
-set(RHEA_COMMON include/rhea/common/configuration_manager.h include/rhea/common/data_structures.h include/rhea/common/enumerations.h include/rhea/common/error_codes.h)
+set(RHEA_COMMON include/rhea/common/configuration_manager.h
+                include/rhea/common/data_structures.h
+                include/rhea/common/enumerations.h
+                include/rhea/common/error_codes.h)
 
 set(RHEA_LIB ${RHEA_COMMON} src/rhea/lib/rhea.cpp include/rhea/rhea.h)
 add_library(old SHARED ${RHEA_LIB})
 
 
-set(RHEA_SERVER ${RHEA_COMMON} src/rhea/server/server.cpp src/rhea/server/server.h src/rhea/server/main.cpp)
+set(RHEA_SERVER ${RHEA_COMMON} src/rhea/server/Server.cpp src/rhea/server/server.h src/rhea/server/main.cpp)
 
 add_executable(rhea_server ${RHEA_SERVER})
