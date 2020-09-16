@@ -65,3 +65,5 @@
 /build/sentinel/CMakeFiles/progress.marks
 /build/sentinel/sentinel.cbp
 /build/
+
+cmake-build-*
