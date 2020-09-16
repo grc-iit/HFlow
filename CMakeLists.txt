@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(old VERSION 1.0.0 DESCRIPTION "")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -g -DBASKET_ENABLE_RPCLIB")
 
 add_subdirectory(sentinel)
 include_directories(sentinel/include)
