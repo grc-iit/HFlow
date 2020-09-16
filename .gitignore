@@ -1,6 +1,6 @@
 # Prerequisites
 *.d
-
+.gitmodules
 # Compiled Object files
 *.slo
 *.lo
