@@ -5,7 +5,15 @@
 #ifndef RHEA_JOB_MANAGER_H
 #define RHEA_SERVER_H
 
+#include <cstdint>
 #include <sentinel/client.h>
+#include <time.h>
+#include <chrono>
+#include <thread>
+#include <future>
+
+#define DEFAULT_INTERVAL 300
+#define VARIATION 100
 
 namespace rhea{
 
@@ -16,12 +24,29 @@ namespace rhea{
 
     class server {
     private:
+        time_t interval;
+        uint_fast16_t variation;
         int alter_collector(Alter_Type);
         int alter_transformers(Alter_Type);
         int alter_writers(Alter_Type);
-        float get_rate();
+        uint_fast64_t get_in_rate();
+        uint_fast64_t get_out_rate();
     public:
-        void single_loop();
+        server(){
+            interval = DEFAULT_INTERVAL;
+            variation = VARIATION;
+        }
+        server(server &other){
+            this->interval = other.interval;
+            this->variation = other.variation;
+        }
+        server &operator=(const server &other){
+            this->interval = other.interval;
+            this->variation = other.variation;
+            return *this;
+        }
+        void run();
+        void single_loop(std::future<void> futureObj);
     };
 }
 
