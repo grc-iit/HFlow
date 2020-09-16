@@ -1,0 +1,172 @@
+
+Driver Program --> IOF Queue Client
+IOF --> IOF Queue Server
+
+TaskManager --> TaskManger Server (RPC). To spawn task and delte them.
+    Tasks --> IOF Queue Client (Collector)
+          --> Internal TaskExecutor Queue Client (Inter task communication)
+          ??? Internal TaskExecutor Queue Server ()
+
+JobManger --> JobManager Server (RPC). To submit job. KEYBY
+          --> TaskManager Client (RPC)
+
+ResourceManager --> IOF Queue Server
+                --> Internal TaskExecutor Queue Client
+                --> TaskManager Client (??)
+
+User --> JobManager Client (RPC)
+
+
+Event{
+    id;
+    type:
+    Data data;
+}
+
+
+VectorEvent:public Event{
+    vector<event> data;
+}
+
+TaskManager holds 1 of each type:
+    -- Collector(IOWrite): Event
+    -- Keyby(Event): Event
+    -- Agg(Evet): std::vector<Event>
+    -- Sink(vector<event>): void
+
+    TaskExecutor Agg.run()
+        Needs to pull form the queue
+
+    collector_output_queue = basket::queue<Event>   (keyby_input_queue)
+    keyby_output_queue = basket::queue<Event>
+
+    map<queue> = {}
+
+
+    TaskManager:Server -> map<TaskExecutorID, queue<Task>>
+        - ThreadPool
+            1   -> While(true) Collector (map.get(collectorID).Pop() -> Event)
+                -> Process(Event) -> Event_o
+                -> JobManager-> get correct taskmanager for KeyBy -> TaskManager:Client(tmID)->RPC(teID, Event_o)
+            2   -> While(true) KeyBy((map.get(keyById).Pop() -> Event)
+                ->
+
+
+    TaskManager:Server depends  -> JobManager:Client
+                                -> TaskManager:Client
+
+
+    TaskManager:Server ->  queue<Task>
+        - mainThread : TaskSorter(picks task from queue, check eId, spawn or given to exiting executor)
+            - ChildThreads
+                1   -> While(true) Collector (LQUEUE.Pop() -> Event)
+                    -> Process(Event) -> Event_o
+                    -> JobManager-> get correct taskmanager for KeyBy -> Task(teID, Event_o) TaskManager:Client(tmID)->Push(Task)
+                2   -> While(true) KeyBy((LQUEUE.Pop() -> Event)
+                    ->
+
+
+
+
+Client 1: call for execution of task. RPC
+Client 2: call for execution of task2. RPC
+
+Server: Creates queue for task and calls task manager to spawn a taskexecutor for tasl
+        Creates queue2 for task2 and calls tm to spawn a tw for task2
+
+Demonize<taskManager> TaskManaer()
+                        TaskManager.run()
+                        Processes: TaskManagerServer.run()
+
+
+
+Questions
+    Local Push/Put from queue object
+    Daemon starts thread and it loops, taskManager spawns and still needs to loop.
+
+    Stop task means redirecting all flow.
+    discuss respawn, dormant mechanishm
+
+
+??what happens if my collector dies?
+
+Task deployed vs undeployed
+
+Task running vs stopped
+
+Hari solution:
+Collector --> IOwriter
+IOwriter Dies -> Informs JobManager
+Collector.getDestination(){
+    Deploy a new/same IOwriter
+    return destination
+    }
+
+Collector --> IOwriter1
+IOWriter1 stops
+Collector.getDestination(): IOwriter1.destination()
+Message is sent --> IOwriter.runs again
+
+If i want to kill it.
+jobManager --> Collector.UpdateDestination(IOWriter2)
+
+taskId = <Collector/KeyBy>
+basket::unordered_map<taskId,vector<Node>> map;
+basket::unordered_map<Node,Load> map_2;
+DAG<taskId> dag;
+
+taskId GetDestination(int currTaskId){
+   int nextId = getNextTaskId(currTaskId);
+   Node destination = FindIdealNode(nextId);
+   return destination;
+}
+
+Debug stuff
+https://bitbucket.org/scs-io/hcompress/src/master/src/common/data_structures.cpp
+https://bitbucket.org/scs-io/hcompress/src/master/debug/include/debug.h
+
+Classes need a serializer and a hash for unordered map
+Change taskexecutor to use sharedptr and dynamic cast
+
+Change keyb
+
+job_manager: Data Structure: Set<pair<nodeid,load>>
+Requirements: Fast retrival of min/max
+
+two functions bind through rpc
+- one to update (not live, on interval)
+- one to get min (live)
+
+jobmanagers rpc servers needs to be multi-threaded.
+
+bing(GiveMeDestination)
+
+std::unorder_map<NodeId, TaskId> taskDeployment   //Basket
+std::unorder_map<TaskId, TaskDestination> destinationMap
+std::unorder_map<TaskId, TaskStatus> taskStatus
+GiveMeDestination(){
+    currentNode = gerCurrentNode(nodeId); //look at different maps based on the nodeId
+
+    if(currentNode == null || loadMap.at(currentNode) > MaxLoad || taskIsDead){
+        newNode = findMinLoadNode();
+        currentNode = newNode
+        return newNode
+    }
+    return currentNOde;
+}
+
+//Test Multithreaded Server JobManager
+
+unordered_map<NodeId, unordered_Map<hashedKey, Node>>  //std. Lives on the jobManager
+
+When a task Dies:
+    Global structure TaskStateus, I set myself as dead
+
+When a task Spawn:
+    Set themselves as alive.
+    Node to taskId mapping. //
+
+
+Objects that are used on rpcs
+
+
