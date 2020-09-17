@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="sentinel"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\scs_io_common\;CMake Files\scs_io_common\test\;CMake Files\scs_io_common\test\unit\;CMake Files\sentinel\;CMake Files\sentinel\test\;CMake Files\sentinel\test\unit\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sentinel_monitor_server">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/sentinel_monitor_server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 sentinel_monitor_server"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sentinel_monitor_server/fast">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/sentinel_monitor_server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 sentinel_monitor_server/fast"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sentinel_job_manager">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/sentinel_job_manager" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 sentinel_job_manager"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sentinel_job_manager/fast">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/sentinel_job_manager" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 sentinel_job_manager/fast"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sentinel">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/libsentinel.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 sentinel"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sentinel/fast">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/libsentinel.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 sentinel/fast"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sentinel_worker_manager">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/sentinel_worker_manager" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 sentinel_worker_manager"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sentinel_worker_manager/fast">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/sentinel_worker_manager" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 sentinel_worker_manager/fast"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sentinel_monitor">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/libsentinel_monitor.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 sentinel_monitor"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sentinel_monitor/fast">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/libsentinel_monitor.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 sentinel_monitor/fast"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="class_loader_test">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/class_loader_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 class_loader_test"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="class_loader_test/fast">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/class_loader_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 class_loader_test/fast"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="job">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/libjob.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 job"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="job/fast">
+				<Option output="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/libjob.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/include"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src"/>
+					<Add directory="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 job/fast"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/sentinel/test/unit/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include/sentinel/common/configuration_manager.h">
+			<Option target="sentinel_monitor_server"/>
+			<Option target="sentinel_job_manager"/>
+			<Option target="sentinel"/>
+			<Option target="sentinel_worker_manager"/>
+			<Option target="sentinel_monitor"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include/sentinel/common/daemon.h">
+			<Option target="sentinel_monitor_server"/>
+			<Option target="sentinel_job_manager"/>
+			<Option target="sentinel"/>
+			<Option target="sentinel_worker_manager"/>
+			<Option target="sentinel_monitor"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include/sentinel/common/data_structures.h">
+			<Option target="sentinel_monitor_server"/>
+			<Option target="sentinel_job_manager"/>
+			<Option target="sentinel"/>
+			<Option target="sentinel_worker_manager"/>
+			<Option target="sentinel_monitor"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include/sentinel/common/debug.h">
+			<Option target="sentinel_monitor_server"/>
+			<Option target="sentinel_job_manager"/>
+			<Option target="sentinel"/>
+			<Option target="sentinel_worker_manager"/>
+			<Option target="sentinel_monitor"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include/sentinel/common/enumerations.h">
+			<Option target="sentinel_monitor_server"/>
+			<Option target="sentinel_job_manager"/>
+			<Option target="sentinel"/>
+			<Option target="sentinel_worker_manager"/>
+			<Option target="sentinel_monitor"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include/sentinel/common/error_codes.h">
+			<Option target="sentinel_monitor_server"/>
+			<Option target="sentinel_job_manager"/>
+			<Option target="sentinel"/>
+			<Option target="sentinel_worker_manager"/>
+			<Option target="sentinel_monitor"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include/sentinel/common/error_definition.h">
+			<Option target="sentinel_monitor_server"/>
+			<Option target="sentinel_job_manager"/>
+			<Option target="sentinel"/>
+			<Option target="sentinel_worker_manager"/>
+			<Option target="sentinel_monitor"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include/sentinel/job_manager/Server.h">
+			<Option target="sentinel_job_manager"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include/sentinel/job_manager/client.h">
+			<Option target="sentinel"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include/sentinel/monitor/client.h">
+			<Option target="sentinel"/>
+			<Option target="sentinel_monitor"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/include/sentinel/worker_manager/client.h">
+			<Option target="sentinel"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/job_manager/client.cpp">
+			<Option target="sentinel"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/job_manager/main.cpp">
+			<Option target="sentinel_job_manager"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/job_manager/server.cpp">
+			<Option target="sentinel_job_manager"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/monitor/client.cpp">
+			<Option target="sentinel"/>
+			<Option target="sentinel_monitor"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/monitor/main.cpp">
+			<Option target="sentinel_monitor_server"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/monitor/server.cpp">
+			<Option target="sentinel_monitor_server"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/monitor/server.h">
+			<Option target="sentinel_monitor_server"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/worker_manager/client.cpp">
+			<Option target="sentinel"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/worker_manager/main.cpp">
+			<Option target="sentinel_worker_manager"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/worker_manager/server.cpp">
+			<Option target="sentinel_worker_manager"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/worker_manager/server.h">
+			<Option target="sentinel_worker_manager"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/test/unit/class_loader/rhea_job.cpp">
+			<Option target="job"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/test/unit/class_loader/test.cpp">
+			<Option target="class_loader_test"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\scs_io_common\"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/test/unit/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\scs_io_common\test\unit\"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\sentinel\"/>
+		</Unit>
+		<Unit filename="/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/test/unit/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\sentinel\test\unit\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

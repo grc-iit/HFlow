@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../scs_io_common/include/common/arguments.h
+memory
+-
+string
+-
+unordered_map
+-
+list
+-
+memory
+-
+iostream
+-
+
+/home/lukemartinlogan/Documents/Projects/PhD/rhea/scs_io_common/test/unit/args/test.cpp
+common/arguments.h
+-
+assert.h
+-
+

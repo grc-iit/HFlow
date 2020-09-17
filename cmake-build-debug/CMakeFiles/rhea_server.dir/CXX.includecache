@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/lukemartinlogan/Documents/Projects/PhD/rhea/src/rhea/server/Server.cpp
+server.h
+/home/lukemartinlogan/Documents/Projects/PhD/rhea/src/rhea/server/server.h
+
+/home/lukemartinlogan/Documents/Projects/PhD/rhea/src/rhea/server/main.cpp
+
+/home/lukemartinlogan/Documents/Projects/PhD/rhea/src/rhea/server/server.h
+cstdint
+-
+time.h
+-
+chrono
+-
+thread
+-
+future
+-
+

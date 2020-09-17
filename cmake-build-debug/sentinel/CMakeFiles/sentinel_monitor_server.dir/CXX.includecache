@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/monitor/main.cpp
+
+/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/monitor/server.cpp
+server.h
+/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/monitor/server.h
+
+/home/lukemartinlogan/Documents/Projects/PhD/rhea/sentinel/src/sentinel/monitor/server.h
+
