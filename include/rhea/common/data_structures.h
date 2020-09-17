@@ -2,8 +2,8 @@
 // Created by mani on 9/14/2020.
 //
 
-#ifndef RHEA_DATA_STRUCTURES_H
-#define RHEA_DATA_STRUCTURES_H
+#ifndef RHEA_COMMON_DATA_STRUCTURES_H
+#define RHEA_COMMON_DATA_STRUCTURES_H
 
 #include <sentinel/common/data_structures.h>
 
@@ -30,4 +30,4 @@ typedef struct Flow {
     Flow(Flow &other): parcels_(std::vector(other.parcels_)){}
 } Flow;
 
-#endif //RHEA_DATA_STRUCTURES_H
+#endif //RHEA_COMMON_DATA_STRUCTURES_H
