@@ -6,7 +6,6 @@
 #define RHEA_SERVER_H
 
 #include <cstdint>
-#include <sentinel/client.h>
 #include <time.h>
 #include <chrono>
 #include <thread>

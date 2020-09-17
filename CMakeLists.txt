@@ -26,3 +26,4 @@ add_library(old SHARED ${RHEA_LIB})
 set(RHEA_SERVER ${RHEA_COMMON} src/rhea/server/Server.cpp src/rhea/server/server.h src/rhea/server/main.cpp)
 
 add_executable(rhea_server ${RHEA_SERVER})
+target_link_libraries(rhea_server -pthread)
