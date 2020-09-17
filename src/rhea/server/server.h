@@ -23,6 +23,10 @@ namespace rhea{
 
     class server {
     private:
+        /**
+         * FIXME: all methods use capitalize case e.g., alter_collector -> AlterCollector
+         * Do the actual calls through the Lib and integrate it.
+         */
         time_t interval;
         uint_fast16_t variation;
         int alter_collector(Alter_Type);
