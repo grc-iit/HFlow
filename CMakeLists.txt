@@ -14,6 +14,13 @@ add_dependencies(sentinel scs_io_common)
 include_directories(src)
 include_directories(include)
 
+set(LIBS -lpthread -lbasket -lrpc  -lboost_system -lboost_filesystem -lmpi -ldl -L${CMAKE_BINARY_DIR}/scs_io_common -lscs_io_common)
+
+set(SENTINEL_COMMON sentinel/include/sentinel/common/configuration_manager.h sentinel/include/sentinel/common/data_structures.h
+        sentinel/include/sentinel/common/enumerations.h sentinel/include/sentinel/common/error_codes.h sentinel/include/sentinel/common/error_definition.h
+        sentinel/include/sentinel/common/debug.h sentinel/include/sentinel/common/daemon.h)
+set(SENTINEL_LIB ${SENTINEL_COMMON} sentinel/src/sentinel/job_manager/client.cpp sentinel/include/sentinel/job_manager/client.h sentinel/src/sentinel/worker_manager/client.cpp sentinel/include/sentinel/worker_manager/client.h sentinel/src/sentinel/monitor/client.cpp sentinel/include/sentinel/monitor/client.h)
+
 set(RHEA_COMMON include/rhea/common/configuration_manager.h
                 include/rhea/common/data_structures.h
                 include/rhea/common/enumerations.h
@@ -23,7 +30,7 @@ set(RHEA_LIB ${RHEA_COMMON} src/rhea/lib/rhea.cpp include/rhea/rhea.h)
 add_library(old SHARED ${RHEA_LIB})
 
 
-set(RHEA_SERVER ${RHEA_COMMON} src/rhea/server/Server.cpp src/rhea/server/server.h src/rhea/server/main.cpp)
+set(RHEA_SERVER ${RHEA_COMMON} ${SENTINEL_LIB} src/rhea/server/Server.cpp src/rhea/server/server.h src/rhea/server/main.cpp)
 
 add_executable(rhea_server ${RHEA_SERVER})
-target_link_libraries(rhea_server -pthread)
+target_link_libraries(rhea_server ${LIBS})
