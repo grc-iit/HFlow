@@ -3,7 +3,7 @@
 //
 
 #ifndef RHEA_JOB_MANAGER_H
-#define RHEA_SERVER_H
+#define RHEA_JOB_MANAGER_H
 
 #include <cstdint>
 #include <time.h>
@@ -11,8 +11,12 @@
 #include <thread>
 #include <future>
 
+#include <basket.h>
+#include <sentinel/job_manager/client.h>
+
 #define DEFAULT_INTERVAL 300
 #define VARIATION 100
+#define STEP 5
 
 namespace rhea{
 
@@ -29,30 +33,35 @@ namespace rhea{
          */
         time_t interval;
         uint_fast16_t variation;
-        int alter_collector(Alter_Type);
-        int alter_transformers(Alter_Type);
-        int alter_writers(Alter_Type);
+        uint_fast64_t step;
+        bool AlterCollector(uint_fast64_t out_rate, uint_fast64_t in_rate);
+        bool AlterTransformers(uint_fast64_t out_rate, uint_fast64_t in_rate);
+        bool AlterWriters(uint_fast64_t out_rate, uint_fast64_t in_rate);
         uint_fast64_t get_in_rate();
+        void RunInternal(std::future<void> futureObj);
         uint_fast64_t get_out_rate();
+        // sentinel::job_manager::client job_manager;
+        // auto rpc;
     public:
         server(){
             interval = DEFAULT_INTERVAL;
             variation = VARIATION;
+            step = STEP;
+            // rpc = basket::Singleton<RPCFactory>::GetInstance()->GetRPC(BASKET_CONF->RPC_PORT);
         }
         server(server &other){
             this->interval = other.interval;
             this->variation = other.variation;
+            this->step = other.variation;
         }
         server &operator=(const server &other){
             this->interval = other.interval;
             this->variation = other.variation;
+            this->step = other.step;
             return *this;
         }
-        void run();
-        void single_loop(std::future<void> futureObj);
+        void Run();
     };
 }
-
-
 
 #endif //RHEA_JOB_MANAGER_H

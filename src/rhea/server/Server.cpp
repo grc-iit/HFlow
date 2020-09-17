@@ -4,10 +4,10 @@
 
 #include "server.h"
 
-void rhea::server::run() {
+void rhea::server::Run() {
 	std::promise<void> exit_signal;
 	std::future<void> future_obj = exit_signal.get_future();
-	std::thread t_thread(&rhea::server::single_loop, this, std::move(future_obj));
+	std::thread t_thread(&rhea::server::RunInternal, this, std::move(future_obj));
 	// promises.push_back(std::move(exit_signal));
 	// pool.push_back(std::move(t_thread));
 
@@ -22,23 +22,29 @@ uint_fast64_t rhea::server::get_out_rate(){
 	return 10;
 }
 
-int rhea::server::alter_collector(rhea::Alter_Type){
+bool rhea::server::AlterCollector(uint_fast64_t out_rate, uint_fast64_t in_rate){
 	// doOp
 	return 1;
 }
-int rhea::server::alter_transformers(rhea::Alter_Type){
+bool rhea::server::AlterTransformers(uint_fast64_t out_rate, uint_fast64_t in_rate){
 	//doOp
 	return 1;
 }
-int rhea::server::alter_writers(rhea::Alter_Type){
+bool rhea::server::AlterWriters(uint_fast64_t out_rate, uint_fast64_t in_rate){
 	//doOp
-	return 1;
+	int multiplier = out_rate > in_rate ? -1 : 1;
+	auto difference = abs((int)(out_rate - in_rate)) - (variation/2);
+	uint16_t node_var = difference*multiplier/step;
+	ResourceAllocation resources(node_var ,0, 0);
+	auto ret = basket::Singleton<sentinel::job_manager::client>::GetInstance()->ChangeResourceAllocation(resources);
+	return ret;
 }
+
 /**
  * TODO: follow other server conventions. we call this method RunInternal.
  * This will be a private function called by Run method.
  */
-void rhea::server::single_loop(std::future<void> futureObj) {
+void rhea::server::RunInternal(std::future<void> futureObj) {
 	while (futureObj.wait_for(std::chrono::microseconds(interval)) == std::future_status::timeout) {
 		auto in_rate = get_in_rate();
 		auto out_rate = get_out_rate();
@@ -51,13 +57,7 @@ void rhea::server::single_loop(std::future<void> futureObj) {
 		     * grow or shink
 		     *
 		     */
-			if (in_rate > out_rate){
-				auto op = Alter_Type::GROW;
-				auto ret = alter_writers(op);
-			}
-			else if (out_rate >  in_rate){
-				auto op = Alter_Type::SHRINK;
-				auto ret = alter_writers(op);
+                auto ret = AlterWriters(out_rate, in_rate);
 			}
 		}
 	}
