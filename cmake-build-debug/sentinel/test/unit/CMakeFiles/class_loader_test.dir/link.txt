@@ -1,1 +1,0 @@
-/usr/bin/c++   -w -g -DBASKET_ENABLE_RPCLIB -w -g -DBASKET_ENABLE_RPCLIB  -g   CMakeFiles/class_loader_test.dir/class_loader/test.cpp.o  -o class_loader_test  -Wl,-rpath,/home/lukemartinlogan/Documents/Projects/PhD/rhea/cmake-build-debug/scs_io_common ../../../scs_io_common/libscs_io_common.so -ldl -lboost_system -lboost_filesystem 

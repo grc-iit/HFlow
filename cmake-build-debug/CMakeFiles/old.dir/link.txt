@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC  -w -g -DBASKET_ENABLE_RPCLIB -g  -shared -Wl,-soname,libold.so -o libold.so CMakeFiles/old.dir/src/rhea/lib/rhea.cpp.o 
