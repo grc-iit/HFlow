@@ -6,34 +6,35 @@
 #define RHEA_RHEA_H
 
 #include <sentinel/job_manager/client.h>
+#include <sentinel/worker_manager/client.h>
 #include <rhea/common/data_structures.h>
+#include <sentinel/common/daemon.h>
+#include <basket/common/singleton.h>
 
 namespace rhea{
 
 class Client {
 private:
-    std::vector<struct DataSource> sources;
-    std::vector<struct StorageSolution> sinks;
 public:
     Client();
     ~Client();
 
     // Initialization
     bool SubmitJob(uint32_t jid);
-    bool ReleaseJob(uint32_t jid);
+    bool TerminateJob(uint32_t jid);
 
     // Admin API
 
     // Source API
-    bool CreateSource(std::string name);
-    bool DeleteSource(std::string name);
-    bool Publish(std::string src, CharStruct message);
+    bool CreateSource(CharStruct name);
+    bool DeleteSource(CharStruct name);
+    bool Publish(CharStruct src, CharStruct message);
 
     // Sink API
-    bool CreateSink(std::string name);
-    bool DeleteSink(std::string name);
-    bool SubscribeSink(std::string src);
-    bool UnsubscribeSink(std::string src);
+    bool CreateSink(CharStruct name);
+    bool DeleteSink(CharStruct name);
+    bool SubscribeSink(CharStruct src);
+    bool UnsubscribeSink(CharStruct src);
 };
 }
 
