@@ -34,12 +34,23 @@ int rhea::server::alter_writers(rhea::Alter_Type){
 	//doOp
 	return 1;
 }
-
+/**
+ * TODO: follow other server conventions. we call this method RunInternal.
+ * This will be a private function called by Run method.
+ */
 void rhea::server::single_loop(std::future<void> futureObj) {
 	while (futureObj.wait_for(std::chrono::microseconds(interval)) == std::future_status::timeout) {
 		auto in_rate = get_in_rate();
 		auto out_rate = get_out_rate();
-		if (abs(out_rate - in_rate) >= variation){
+		if (abs((int)(out_rate - in_rate)) >= variation){
+		    /**
+		     *
+		     * TODO: create a object of request allocation. where u will say how many more or less.
+		     * Get Current Allocation Status of Sentinel (n nodes)
+		     * if( in_rate < out_rate) increase node proportionally
+		     * grow or shink
+		     *
+		     */
 			if (in_rate > out_rate){
 				auto op = Alter_Type::GROW;
 				auto ret = alter_writers(op);
