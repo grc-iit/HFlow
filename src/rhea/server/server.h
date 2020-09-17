@@ -20,9 +20,9 @@
 
 namespace rhea{
 
-    enum  struct Alter_Type{
-        GROW,
-        SHRINK
+    enum  struct Alter_Type: int8_t {
+        GROW = 1,
+        SHRINK = -1,
     };
 
     class server {
