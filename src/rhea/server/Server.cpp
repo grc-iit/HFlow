@@ -39,7 +39,7 @@ void rhea::server::single_loop(std::future<void> futureObj) {
 	while (futureObj.wait_for(std::chrono::microseconds(interval)) == std::future_status::timeout) {
 		auto in_rate = get_in_rate();
 		auto out_rate = get_out_rate();
-		if (abs(out_rate - in_rate) >= variation){
+		if (abs((int)(out_rate - in_rate)) >= variation){
 			if (in_rate > out_rate){
 				auto op = Alter_Type::GROW;
 				auto ret = alter_writers(op);
