@@ -27,12 +27,12 @@ set(RHEA_COMMON include/rhea/common/configuration_manager.h
 set(RHEA_LIB ${RHEA_COMMON} src/rhea/lib/rhea.cpp include/rhea/rhea.h)
 add_library(old SHARED ${RHEA_LIB})
 
-#set(RHEA_SERVER ${RHEA_COMMON}  src/rhea/server/Server.cpp src/rhea/server/server.h src/rhea/server/main.cpp)
-set(RHEA_SERVER ${RHEA_COMMON} ${SENTINEL_DATA_STRUCTURE} src/rhea/server/Server.cpp src/rhea/server/server.h src/rhea/server/main.cpp)
+#set(RHEA_SERVER ${RHEA_COMMON}  src/rhea/server/ByteFlow_Regulator_Server.cpp src/rhea/server/server.h src/rhea/server/main.cpp)
+set(RHEA_SERVER ${RHEA_COMMON} ${SENTINEL_DATA_STRUCTURE} src/rhea/server/ByteFlow_Regulator_Server.cpp include/rhea/server/ByteFlow_Regulator_Server.h src/rhea/server/main.cpp)
 add_executable(rhea_server ${RHEA_SERVER})
 target_link_libraries(rhea_server ${LIBS})
 
 
-set(RHEA_CLIENT ${RHEA_COMMON} src/rhea/client/client.cpp src/rhea/client/client.h src/rhea/server/main.cpp)
+set(RHEA_CLIENT ${RHEA_COMMON} src/rhea/client/ByteFlow_Regulator_Client.cpp include/rhea/client/ByteFlow_Regulator_Client.h src/rhea/server/main.cpp)
 add_executable(rhea_client ${RHEA_CLIENT})
 target_link_libraries(rhea_client ${LIBS})

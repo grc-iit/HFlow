@@ -27,7 +27,7 @@ namespace rhea{
         SHRINK = -1,
     };
 
-    class server {
+    class ByteFlow_Regulator_Server {
     private:
         /**
          * FIXME: all methods use capitalize case e.g., alter_collector -> AlterCollector
@@ -51,21 +51,21 @@ namespace rhea{
         void RPCInit();
         void ConfigInit();
     public:
-        server(){
+        ByteFlow_Regulator_Server(){
             interval = DEFAULT_INTERVAL;
             variation = VARIATION;
             step = STEP;
             ConfigInit();
             RPCInit();
         }
-        server(server &other){
+        ByteFlow_Regulator_Server(ByteFlow_Regulator_Server &other){
             this->interval = other.interval;
             this->variation = other.variation;
             this->step = other.variation;
             ConfigInit();
             RPCInit();
         }
-        server &operator=(const server &other){
+        ByteFlow_Regulator_Server &operator=(const ByteFlow_Regulator_Server &other){
             this->interval = other.interval;
             this->variation = other.variation;
             this->step = other.step;
