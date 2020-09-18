@@ -12,8 +12,8 @@ void rhea::ByteflowPusher::Run(std::future<void> futureObj) {
 }
 
 void rhea::ByteflowPusher::RunInternal(std::future<void> futureObj) {
-    std::shared_ptr<basket::unordered_map<uint32_t, size_t>> rhea_size_map = std::make_shared<basket::unordered_map<uint32_t, size_t>>("test_client"); // TODO make configurable
-    while(futureObj.wait_for(std::chrono::milliseconds(100)) == std::future_status::timeout){
+    std::shared_ptr<basket::unordered_map<uint32_t, size_t>> rhea_size_map = std::make_shared<basket::unordered_map<uint32_t, size_t>>(RHEA_CONF->BYTEFLOW_SIZE_MAP_NAME);
+    while(futureObj.wait_for(std::chrono::milliseconds(RHEA_CONF->BYTEFLOW_STAT_PUSH_INTERVAL)) == std::future_status::timeout){
         for (auto jobinfo : rhea_size_map->GetAllData()) {
             client->SetInRate(0, jobinfo.first, jobinfo.second/(100*0.01));
             // client->SetOutRate(0, );
@@ -22,7 +22,7 @@ void rhea::ByteflowPusher::RunInternal(std::future<void> futureObj) {
 }
 
 rhea::Client::Client() {
-    sizes = std::make_shared<basket::unordered_map<uint32_t, size_t>>("test_client"); // TODO make configurable
+    sizes = std::make_shared<basket::unordered_map<uint32_t, size_t>>(RHEA_CONF->BYTEFLOW_SIZE_MAP_NAME);
     CharStruct log = "./single_node_rhea_queue.log";
     auto daemon = basket::Singleton<common::Daemon<rhea::ByteflowPusher>>::GetInstance(log);
     daemon->Run();

@@ -12,6 +12,7 @@
 #include <basket/queue/queue.h>
 #include <basket/unordered_map/unordered_map.h>
 #include <rhea/client/ByteFlow_Regulator_Client.h>
+#include <rhea/common/configuration_manager.h>
 
 namespace rhea{
 
