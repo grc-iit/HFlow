@@ -13,7 +13,7 @@ int main(int argc, char* argv[]){
     if(argc > 1) SENTINEL_CONF->CONFIGURATION_FILE=argv[1];
     BASKET_CONF->BACKED_FILE_DIR=SENTINEL_CONF->JOBMANAGER_DIR;
     CharStruct log = "./single_node_byteflow_regulator.log";
-    auto daemon = basket::Singleton<common::Daemon<rhea::ByteFlow_Regulator_Server()>>::GetInstance(log);
+    auto daemon = basket::Singleton<common::Daemon<rhea::ByteFlow_Regulator_Server>>::GetInstance(log);
     daemon->Run();
     return 0;
 }
