@@ -14,30 +14,32 @@ void rhea::server::Run() {
 	t_thread.join();
 }
 
-uint_fast64_t rhea::server::get_in_rate(){
-	return 10;
+void rhea::server::set_in_rate(uint16_t job_id, uint_fast32_t in_rate){
+    in_rate_map[job_id] = in_rate;
 }
 
-uint_fast64_t rhea::server::get_out_rate(){
-	return 10;
+void rhea::server::set_out_rate(uint16_t job_id, uint_fast32_t out_rate){
+    out_rate_map[job_id] = out_rate;
 }
 
-bool rhea::server::AlterCollector(uint_fast64_t out_rate, uint_fast64_t in_rate){
+bool rhea::server::AlterCollector(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate){
 	// doOp
 	return 1;
 }
-bool rhea::server::AlterTransformers(uint_fast64_t out_rate, uint_fast64_t in_rate){
+bool rhea::server::AlterTransformers(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate){
 	//doOp
 	return 1;
 }
-bool rhea::server::AlterWriters(uint_fast64_t out_rate, uint_fast64_t in_rate){
+bool rhea::server::AlterWriters(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate){
 	//doOp
     int8_t multiplier = static_cast<int8_t>(out_rate > in_rate ? Alter_Type::SHRINK : Alter_Type::GROW);
 	auto difference = abs((int)(out_rate - in_rate)) - (variation/2);
 	uint16_t node_var = difference*multiplier/step;
-	ResourceAllocation resources(node_var ,0, 0);
-	auto ret = basket::Singleton<sentinel::job_manager::client>::GetInstance()->ChangeResourceAllocation(resources);
-	return ret;
+	// TODO: add more alterations based
+	ResourceAllocation resources(job_id, node_var ,0, 0);
+//	auto ret = basket::Singleton<sentinel::job_manager::client>::GetInstance()->ChangeResourceAllocation(resources);
+//	return ret;
+    return true;
 }
 
 /**
@@ -46,20 +48,38 @@ bool rhea::server::AlterWriters(uint_fast64_t out_rate, uint_fast64_t in_rate){
  */
 void rhea::server::RunInternal(std::future<void> futureObj) {
     while (futureObj.wait_for(std::chrono::microseconds(interval)) == std::future_status::timeout) {
-        auto in_rate = get_in_rate();
-        auto out_rate = get_out_rate();
-        if (abs((int) (out_rate - in_rate)) >= variation) {
-            /**
-             *
-             * TODO: create a object of request allocation. where u will say how many more or less.
-             * Get Current Allocation Status of Sentinel (n nodes)
-             * if( in_rate < out_rate) increase node proportionally
-             * grow or shink
-             *
-             */
-            auto ret = AlterWriters(out_rate, in_rate);
+        // iterate over map and get the in and out flows and do fun shit!
+
+        for (auto &i : in_rate_map ) {
+            auto out_map_find = out_rate_map.find(i.first);
+            if (out_map_find != out_rate_map.end()){
+                auto in_rate = i.second;
+                auto out_rate = out_map_find->second;
+                if (abs((int) (out_rate - in_rate)) >= variation) {
+                    /**
+                     *
+                     * TODO: create a object of request allocation. where u will say how many more or less.
+                     * Get Current Allocation Status of Sentinel (n nodes)
+                     * if( in_rate < out_rate) increase node proportionally
+                     * grow or shink
+                     *
+                     */
+                    auto ret = AlterWriters(i.first, out_rate, in_rate);
+                }
+            }
         }
     }
+}
+
+void rhea::server::RPCInit() {
+
+    std::shared_ptr<RPC> client_rpc_;
+    std::function<void(uint16_t, uint_fast32_t)> functionSetInRate(std::bind(&rhea::server::set_in_rate, this, std::placeholders::_1, std::placeholders::_2));
+    client_rpc_->bind("set_in_rate", functionSetInRate);
+
+    std:function<void(uint16_t, uint_fast32_t)> functionSetOutRate(std::bind(&rhea::server::set_out_rate, this, std::placeholders::_1, std::placeholders::_2));
+    client_rpc_->bind("set_out_rate", functionSetOutRate);
+
 }
 
 
