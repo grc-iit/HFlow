@@ -11,7 +11,6 @@
 #include <thread>
 #include <future>
 #include <functional>
-// datastructures is commented out due to compilation issues
 #include <sentinel/job_manager/client.h>
 #include <basket/communication/rpc_factory.h>
 #include <rpc/client.h>
@@ -29,11 +28,6 @@ namespace rhea{
 
     class ByteFlow_Regulator_Server {
     private:
-        /**
-         * FIXME: all methods use capitalize case e.g., alter_collector -> AlterCollector
-         * Do the actual calls through the Lib and integrate it.
-         */
-
         // make all these maps against job_id
         time_t interval;
         uint_fast16_t variation;
@@ -45,35 +39,25 @@ namespace rhea{
         bool AlterCollector(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate);
         bool AlterTransformers(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate);
         bool AlterNodes(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate);
+        void RunInternal(std::future<void> futureObj);
+    public:
+        void Run(std::future<void> futureObj);
         void SetInRate(uint16_t job_id, uint_fast32_t in_rate);
         void SetOutRate(uint16_t job_id, uint_fast32_t out_rate);
-        void RunInternal(std::future<void> futureObj);
-        void RPCInit();
-        void ConfigInit();
-    public:
+
         ByteFlow_Regulator_Server(){
             interval = DEFAULT_INTERVAL;
             variation = VARIATION;
             step = STEP;
-            ConfigInit();
-            RPCInit();
+            SENTINEL_CONF->ConfigureByteflowRegulatorServer();
+            auto basket=BASKET_CONF;
+            client_rpc_=basket::Singleton<RPCFactory>::GetInstance()->GetRPC(BASKET_CONF->RPC_PORT);
+//            std::function<void(uint16_t, uint_fast32_t)> functionSetInRate(std::bind(&rhea::ByteFlow_Regulator_Server::SetInRate, this, std::placeholders::_1, std::placeholders::_2));
+//            client_rpc_->bind("SetInRate", functionSetInRate);
+//
+//            std:function<void(uint16_t, uint_fast32_t)> functionSetOutRate(std::bind(&rhea::ByteFlow_Regulator_Server::SetOutRate, this, std::placeholders::_1, std::placeholders::_2));
+//            client_rpc_->bind("setOutRate", functionSetOutRate);
         }
-        ByteFlow_Regulator_Server(ByteFlow_Regulator_Server &other){
-            this->interval = other.interval;
-            this->variation = other.variation;
-            this->step = other.variation;
-            ConfigInit();
-            RPCInit();
-        }
-        ByteFlow_Regulator_Server &operator=(const ByteFlow_Regulator_Server &other){
-            this->interval = other.interval;
-            this->variation = other.variation;
-            this->step = other.step;
-            ConfigInit();
-            RPCInit();
-            return *this;
-        }
-        void Run();
     };
 }
 

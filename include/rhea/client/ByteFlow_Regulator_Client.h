@@ -5,40 +5,23 @@
 #ifndef RHEA_BYTEFLOW_REGULATOR_CLIENT_H
 #define RHEA_BYTEFLOW_REGULATOR_CLIENT_H 
 
-#include <basket.h>
 #include <basket/communication/rpc_factory.h>
-#include <memory>
-#include <sentinel/job_manager/client.h>
+#include <sentinel/common/configuration_manager.h>
 #include <rpc/client.h>
-#include <basket.h>
-#include <string>
 
 namespace rhea{
         class ByteFlow_Regulator_Client {
         private:
             std::shared_ptr<RPC> server_rpc;
-            void ConfigInit();
-            void RPCInit();
         public:
-            ByteFlow_Regulator_Client();
+            ByteFlow_Regulator_Client(){
+                this->server_rpc = basket::Singleton<RPCFactory>::GetInstance()->GetRPC(BASKET_CONF->RPC_PORT);
+                SENTINEL_CONF->ConfigureByteflowRegulatorClient();
+                auto basket=BASKET_CONF;
+            }
             bool SetInRate(uint8_t server_index_, uint16_t job_id, uint_fast64_t in_rate);
             bool SetOutRate(uint8_t server_index_, uint16_t job_id, uint_fast64_t out_rate);
             void Finalize();
-
-            ByteFlow_Regulator_Client(ByteFlow_Regulator_Client &other){
-                server_rpc = other.server_rpc;
-                ConfigInit();
-                RPCInit();
-            }
-            ByteFlow_Regulator_Client &operator=(const ByteFlow_Regulator_Client &other){
-                server_rpc = other.server_rpc;
-                ConfigInit();
-                RPCInit();
-                return *this;
-            }
-
-
-
         };
 };
 
