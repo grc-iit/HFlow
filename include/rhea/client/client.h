@@ -14,23 +14,23 @@
 #include <string>
 
 namespace rhea{
-        class Client {
+        class ByteFlow_Regulator_Client {
         private:
             std::shared_ptr<RPC> server_rpc;
             void ConfigInit();
             void RPCInit();
         public:
-            Client();
+            ByteFlow_Regulator_Client();
             bool SetInRate(uint8_t server_index_, uint16_t job_id, uint_fast64_t in_rate);
-            bool setOutRate(uint8_t server_index_, uint16_t job_id, uint_fast64_t out_rate);
+            bool SetOutRate(uint8_t server_index_, uint16_t job_id, uint_fast64_t out_rate);
             void Finalize();
 
-            Client(Client &other){
+            ByteFlow_Regulator_Client(ByteFlow_Regulator_Client &other){
                 server_rpc = other.server_rpc;
                 ConfigInit();
                 RPCInit();
             }
-            Client &operator=(const Client &other){
+            ByteFlow_Regulator_Client &operator=(const ByteFlow_Regulator_Client &other){
                 server_rpc = other.server_rpc;
                 ConfigInit();
                 RPCInit();
