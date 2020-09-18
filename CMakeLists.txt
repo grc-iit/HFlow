@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(old VERSION 1.0.0 DESCRIPTION "")
+project(rhea VERSION 1.0.0 DESCRIPTION "")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -g -DBASKET_ENABLE_RPCLIB")
@@ -25,7 +25,7 @@ set(RHEA_COMMON include/rhea/common/configuration_manager.h
                 include/rhea/common/error_codes.h)
 
 set(RHEA_LIB ${RHEA_COMMON} src/rhea/lib/rhea.cpp include/rhea/rhea.h)
-add_library(old SHARED ${RHEA_LIB})
+add_library(rhea SHARED ${RHEA_LIB})
 
 #set(RHEA_SERVER ${RHEA_COMMON}  src/rhea/server/ByteFlow_Regulator_Server.cpp src/rhea/server/server.h src/rhea/server/main.cpp)
 set(RHEA_SERVER ${RHEA_COMMON} ${SENTINEL_DATA_STRUCTURE} src/rhea/server/ByteFlow_Regulator_Server.cpp include/rhea/server/ByteFlow_Regulator_Server.h src/rhea/server/main.cpp)
