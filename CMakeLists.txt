@@ -33,6 +33,6 @@ add_executable(rhea_server ${RHEA_SERVER})
 target_link_libraries(rhea_server ${LIBS})
 
 
-set(RHEA_CLIENT ${RHEA_COMMON} src/rhea/server/client.cpp src/rhea/server/client.h src/rhea/server/main.cpp)
+set(RHEA_CLIENT ${RHEA_COMMON} src/rhea/client/client.cpp src/rhea/client/client.h src/rhea/server/main.cpp)
 add_executable(rhea_client ${RHEA_CLIENT})
 target_link_libraries(rhea_client ${LIBS})
