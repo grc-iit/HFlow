@@ -16,9 +16,6 @@ include_directories(include)
 
 set(LIBS -lpthread -lbasket -lrpc  -lboost_system -lboost_filesystem -lmpi -ldl -L${CMAKE_BINARY_DIR}/scs_io_common -lscs_io_common)
 
-set(SENTINEL_DATA_STRUCTURE sentinel/include/sentinel/common/data_structures.h)
-#set(SENTINEL_LIB ${SENTINEL_DATA_STRUCTURE} sentinel/src/sentinel/job_manager/client.cpp sentinel/include/sentinel/job_manager/client.h sentinel/src/sentinel/worker_manager/client.cpp sentinel/include/sentinel/worker_manager/client.h sentinel/src/sentinel/monitor/client.cpp sentinel/include/sentinel/monitor/client.h)
-
 set(RHEA_COMMON include/rhea/common/configuration_manager.h
                 include/rhea/common/data_structures.h
                 include/rhea/common/enumerations.h
@@ -27,12 +24,13 @@ set(RHEA_COMMON include/rhea/common/configuration_manager.h
 set(RHEA_LIB ${RHEA_COMMON} src/rhea/lib/rhea.cpp include/rhea/rhea.h)
 add_library(rhea SHARED ${RHEA_LIB})
 
-#set(RHEA_SERVER ${RHEA_COMMON}  src/rhea/server/ByteFlow_Regulator_Server.cpp src/rhea/server/server.h src/rhea/server/main.cpp)
-set(RHEA_SERVER ${RHEA_COMMON} ${SENTINEL_DATA_STRUCTURE} src/rhea/server/ByteFlow_Regulator_Server.cpp include/rhea/server/ByteFlow_Regulator_Server.h src/rhea/server/main.cpp)
+set(RHEA_SERVER ${RHEA_COMMON} src/rhea/server/ByteFlow_Regulator_Server.cpp include/rhea/server/ByteFlow_Regulator_Server.h src/rhea/server/main.cpp)
 add_executable(rhea_server ${RHEA_SERVER})
-target_link_libraries(rhea_server ${LIBS})
+add_dependencies(rhea_server sentinel)
+target_link_libraries(rhea_server ${LIBS} -L${CMAKE_BINARY_DIR}/sentinel -lsentinel)
 
 
-set(RHEA_CLIENT ${RHEA_COMMON} src/rhea/client/ByteFlow_Regulator_Client.cpp include/rhea/client/ByteFlow_Regulator_Client.h src/rhea/server/main.cpp)
-add_executable(rhea_client ${RHEA_CLIENT})
-target_link_libraries(rhea_client ${LIBS})
+set(RHEA_CLIENT ${RHEA_COMMON} src/rhea/client/ByteFlow_Regulator_Client.cpp include/rhea/client/ByteFlow_Regulator_Client.h)
+add_library(rhea_client ${RHEA_CLIENT})
+add_dependencies(rhea_client sentinel)
+target_link_libraries(rhea_client ${LIBS} -L${CMAKE_BINARY_DIR}/sentinel -lsentinel)
