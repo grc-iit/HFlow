@@ -6,15 +6,27 @@
 #define RHEA_RHEA_H
 
 #include <sentinel/job_manager/client.h>
-#include <sentinel/worker_manager/client.h>
 #include <rhea/common/data_structures.h>
 #include <sentinel/common/daemon.h>
 #include <basket/common/singleton.h>
+#include <basket/queue/queue.h>
+#include <basket/unordered_map/unordered_map.h>
+#include <rhea/client/ByteFlow_Regulator_Client.h>
 
 namespace rhea{
 
+class ByteflowPusher {
+private:
+    std::shared_ptr<rhea::ByteFlow_Regulator_Client> client;
+public:
+    void Run(std::future<void> futureObj);
+    void RunInternal(std::future<void> futureObj);
+};
+
 class Client {
 private:
+    std::unordered_map<std::string, std::shared_ptr<basket::queue<Parcel>>> sources;
+    std::shared_ptr<basket::unordered_map<uint32_t, size_t>> sizes;
 public:
     Client();
     ~Client();
@@ -26,15 +38,15 @@ public:
     // Admin API
 
     // Source API
-    bool CreateSource(CharStruct name);
-    bool DeleteSource(CharStruct name);
-    bool Publish(CharStruct src, CharStruct message);
+    bool CreateSource(std::string name);
+    bool DeleteSource(std::string name);
+    bool Publish(std::string srcid, CharStruct message, uint32_t jid);
 
     // Sink API
     bool CreateSink(CharStruct name);
     bool DeleteSink(CharStruct name);
-    bool SubscribeSink(CharStruct src);
-    bool UnsubscribeSink(CharStruct src);
+    bool SubscribeSink(CharStruct srcid);
+    bool UnsubscribeSink(CharStruct srcid);
 };
 }
 

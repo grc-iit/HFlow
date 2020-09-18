@@ -10,7 +10,7 @@
 typedef struct Parcel : public Event {
 
     /*Define the default, copy and move constructor*/
-    Parcel(CharStruct id_, size_t position_, char *buffer_, uint16_t storage_index_, size_t data_size_) : Event(id_(id_), position_(position_), buffer_(buffer_), storage_index_(storage_index_), data_size_(data_size_)) {}
+    Parcel(CharStruct id_, size_t position_, char *buffer_, uint16_t storage_index_, size_t data_size_) : Event(id_, position_, buffer_, storage_index_, data_size_) {}
 
     Parcel(const Parcel &other) : Event(other) {}
 
