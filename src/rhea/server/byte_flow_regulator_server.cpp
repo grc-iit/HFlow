@@ -2,29 +2,30 @@
 // Created by mani on 9/14/2020.
 //
 
-#include <rhea/server/ByteFlow_Regulator_Server.h>
+#include <rhea/server/byte_flow_regulator_server.h>
 
-void rhea::ByteFlow_Regulator_Server::Run(std::future<void> futureObj) {
+void rhea::ByteFlowRegulatorServer::Run(std::future<void> futureObj,common::Daemon<ByteFlowRegulatorServer>* obj) {
+    daemon = obj;
     RunInternal(std::move(futureObj));
 }
 
-void rhea::ByteFlow_Regulator_Server::SetInRate(uint16_t job_id, uint_fast32_t in_rate){
+void rhea::ByteFlowRegulatorServer::SetInRate(uint16_t job_id, uint_fast32_t in_rate){
     in_rate_map[job_id] = in_rate;
 }
 
-void rhea::ByteFlow_Regulator_Server::SetOutRate(uint16_t job_id, uint_fast32_t out_rate) {
+void rhea::ByteFlowRegulatorServer::SetOutRate(uint16_t job_id, uint_fast32_t out_rate) {
     out_rate_map[job_id] = out_rate;
 }
 
-bool rhea::ByteFlow_Regulator_Server::AlterCollector(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate){
+bool rhea::ByteFlowRegulatorServer::AlterCollector(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate){
 	// Left here as place holder for further expansion
 	return 1;
 }
-bool rhea::ByteFlow_Regulator_Server::AlterTransformers(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate){
+bool rhea::ByteFlowRegulatorServer::AlterTransformers(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate){
     // Left here as place holder for further expansion
 	return 1;
 }
-bool rhea::ByteFlow_Regulator_Server::AlterNodes(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate){
+bool rhea::ByteFlowRegulatorServer::AlterNodes(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate){
 	//doOp
     int8_t multiplier = static_cast<int8_t>(out_rate > in_rate ? Alter_Type::SHRINK : Alter_Type::GROW);
 	auto difference = abs((int)(out_rate - in_rate)) - (variation/2);
@@ -35,7 +36,7 @@ bool rhea::ByteFlow_Regulator_Server::AlterNodes(uint16_t job_id, uint_fast64_t 
     return jobmanager_client->ChangeResourceAllocation(resources);
 }
 
-void rhea::ByteFlow_Regulator_Server::RunInternal(std::future<void> futureObj) {
+void rhea::ByteFlowRegulatorServer::RunInternal(std::future<void> futureObj) {
     while (futureObj.wait_for(std::chrono::microseconds(interval)) == std::future_status::timeout) {
         // iterate over map and get the in and out flows and do fun shit!
 
