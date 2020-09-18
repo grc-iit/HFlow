@@ -43,11 +43,8 @@ public:
     bool DeleteSource(std::string name);
     bool Publish(std::string srcid, CharStruct message, uint32_t jid);
 
-    // Sink API
-    bool CreateSink(CharStruct name);
-    bool DeleteSink(CharStruct name);
-    bool SubscribeSink(CharStruct srcid);
-    bool UnsubscribeSink(CharStruct srcid);
+    // Collector API
+    Parcel Pull(std::string srcid);
 };
 }
 

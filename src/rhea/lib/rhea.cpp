@@ -65,18 +65,13 @@ bool rhea::Client::Publish(std::string srcid, CharStruct message, uint32_t jid) 
     return true;
 }
 
-bool rhea::Client::CreateSink(CharStruct name) {
-    return false;
-}
-
-bool rhea::Client::DeleteSink(CharStruct name) {
-    return false;
-}
-
-bool rhea::Client::SubscribeSink(CharStruct srcid) {
-    return false;
-}
-
-bool rhea::Client::UnsubscribeSink(CharStruct srcid) {
-    return false;
+Parcel rhea::Client::Pull(std::string srcid) {
+    unsigned short key = 0;
+    auto queue_pair = sources[srcid]->Pop(key);
+    if (queue_pair.first) {
+        return queue_pair.second;
+    }
+    else {
+        return Parcel();
+    }
 }
