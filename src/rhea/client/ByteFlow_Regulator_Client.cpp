@@ -2,7 +2,7 @@
 // Created by neeraj on 9/16/20.
 //
 
-#include "rhea/client/client.h"
+#include "rhea/client/ByteFlow_Regulator_Client.h"
 
 rhea::ByteFlow_Regulator_Client::ByteFlow_Regulator_Client() {
     ConfigInit();
