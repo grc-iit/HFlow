@@ -12,7 +12,7 @@
 #include <future>
 #include <functional>
 // datastructures is commented out due to compilation issues
-#include <sentinel/common/data_structures.h>
+#include <sentinel/job_manager/client.h>
 #include <basket/communication/rpc_factory.h>
 #include <rpc/client.h>
 
@@ -44,31 +44,32 @@ namespace rhea{
         std::unordered_map<uint16_t, uint_fast32_t> out_rate_map;
         bool AlterCollector(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate);
         bool AlterTransformers(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate);
-        bool AlterWriters(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate);
-        void set_in_rate(uint16_t job_id, uint_fast32_t in_rate);
+        bool AlterNodes(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate);
+        void SetInRate(uint16_t job_id, uint_fast32_t in_rate);
+        void SetOutRate(uint16_t job_id, uint_fast32_t out_rate);
         void RunInternal(std::future<void> futureObj);
-        void set_out_rate(uint16_t job_id, uint_fast32_t out_rate);
         void RPCInit();
-        // sentinel::job_manager::client job_manager;
-        // auto rpc;
+        void ConfigInit();
     public:
         server(){
             interval = DEFAULT_INTERVAL;
             variation = VARIATION;
             step = STEP;
+            ConfigInit();
             RPCInit();
         }
         server(server &other){
             this->interval = other.interval;
             this->variation = other.variation;
             this->step = other.variation;
+            ConfigInit();
             RPCInit();
-
         }
         server &operator=(const server &other){
             this->interval = other.interval;
             this->variation = other.variation;
             this->step = other.step;
+            ConfigInit();
             RPCInit();
             return *this;
         }
