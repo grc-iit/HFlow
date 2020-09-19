@@ -25,7 +25,9 @@ namespace rhea {
     class ConfigurationManager : public common::ConfigurationManager {
 
     protected:
-        void LoadChildConfigurations(rapidjson::Document &doc) override {
+        void LoadChildConfigurations(void *doc_) override {
+            rapidjson::Document* doc=NULL;
+            if(doc !=NULL) doc = (rapidjson::Document*)doc_;
             config(doc, "CONFIGURATION_FILE", CONFIGURATION_FILE);
             config(doc, "BYTEFLOW_SIZE_MAP_NAME", BYTEFLOW_SIZE_MAP_NAME);
             config(doc, "BYTEFLOW_STAT_PUSH_INTERVAL", BYTEFLOW_STAT_PUSH_INTERVAL);
