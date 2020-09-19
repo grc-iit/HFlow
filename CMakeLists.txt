@@ -11,6 +11,9 @@ add_subdirectory(sentinel)
 include_directories(sentinel/include)
 add_dependencies(sentinel scs_io_common)
 
+add_subdirectory(rhea_job)
+add_dependencies(rhea_job sentinel)
+
 include_directories(src)
 include_directories(include)
 

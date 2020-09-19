@@ -25,7 +25,9 @@ namespace rhea {
     class ConfigurationManager : public common::ConfigurationManager {
 
     protected:
-        void LoadChildConfigurations(rapidjson::Document &doc) override {
+        void LoadChildConfigurations(void *doc_) override {
+            rapidjson::Document* doc=NULL;
+            if(doc !=NULL) doc = (rapidjson::Document*)doc_;
             config(doc, "CONFIGURATION_FILE", CONFIGURATION_FILE);
             config(doc, "BYTEFLOW_SIZE_MAP_NAME", BYTEFLOW_SIZE_MAP_NAME);
             config(doc, "BYTEFLOW_STAT_PUSH_INTERVAL", BYTEFLOW_STAT_PUSH_INTERVAL);
@@ -99,63 +101,5 @@ namespace rhea {
     };
 }
 
-namespace clmdep_msgpack {
-    MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS) {
-        namespace adaptor {
-            namespace mv1=clmdep_msgpack::v1;
-            template<>
-            struct convert<bip::string> {
-                clmdep_msgpack::object const &operator()(clmdep_msgpack::object const &o, bip::string &v) const {
-                    switch (o.type) {
-                        case clmdep_msgpack::type::BIN:
-                            v.assign(o.via.bin.ptr, o.via.bin.size);
-                            break;
-                        case clmdep_msgpack::type::STR:
-                            v.assign(o.via.str.ptr, o.via.str.size);
-                            break;
-                        default:
-                            throw clmdep_msgpack::type_error();
-                            break;
-                    }
-                    return o;
-                }
-            };
-
-            template<>
-            struct pack<bip::string> {
-                template<typename Stream>
-                clmdep_msgpack::packer<Stream> &
-                operator()(clmdep_msgpack::packer<Stream> &o, const bip::string &v) const {
-                    uint32_t size = checked_get_container_size(v.size());
-                    o.pack_str(size);
-                    o.pack_str_body(v.data(), size);
-                    return o;
-                }
-            };
-
-            template<>
-            struct object<bip::string> {
-                void operator()(clmdep_msgpack::object &o, const bip::string &v) const {
-                    uint32_t size = checked_get_container_size(v.size());
-                    o.type = clmdep_msgpack::type::STR;
-                    o.via.str.ptr = v.data();
-                    o.via.str.size = size;
-                }
-            };
-
-            template<>
-            struct object_with_zone<bip::string> {
-                void operator()(clmdep_msgpack::object::with_zone &o, const bip::string &v) const {
-                    uint32_t size = checked_get_container_size(v.size());
-                    o.type = clmdep_msgpack::type::STR;
-                    char *ptr = static_cast<char *>(o.zone.allocate_align(size, MSGPACK_ZONE_ALIGNOF(char)));
-                    o.via.str.ptr = ptr;
-                    o.via.str.size = size;
-                    std::memcpy(ptr, v.data(), v.size());
-                }
-            };
-        }
-    }
-}
 
 #endif //RHEA_CONFIGURATION_MANAGER_H

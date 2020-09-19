@@ -1,0 +1,24 @@
+Index: sentinel
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- sentinel	(revision 318f0b44323e76e65dd9d18fa49eb3a990726f52)
++++ sentinel	(date 1600382755308)
+@@ -1,1 +1,1 @@
+-bea7d88963b1adbea559d9888c5d5eb9130eff18
+\ No newline at end of file
++9c3a265d189b4f55f569d8efe0a8d0b80c2a3be3
+\ No newline at end of file
+Index: scs_io_common
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- scs_io_common	(revision 318f0b44323e76e65dd9d18fa49eb3a990726f52)
++++ scs_io_common	(date 1600382802636)
+@@ -1,1 +1,1 @@
+-dcd96c24ebfe6cced9dae1dafe2e70f1fe1bff99
+\ No newline at end of file
++b39537460987dac700a33a2a62c02e1bf0e4b473
+\ No newline at end of file
