@@ -18,126 +18,144 @@
 #include <regex>
 #include <boost/filesystem/operations.hpp>
 #include <sentinel/common/error_codes.h>
+#include <common/configuration_manager.h>
 
 #define RHEA_CONF basket::Singleton<rhea::ConfigurationManager>::GetInstance()
 namespace rhea {
-    class ConfigurationManager {
+    class ConfigurationManager : public common::ConfigurationManager {
 
-    private:
-        static std::string replaceEnvVariable(std::string temp_variable){
-
-            std::string pattern("(\\$\\{.*?\\})");
-            auto regexp = regex(pattern);
-            smatch m;
-            regex_search(temp_variable, m, regexp);
-            auto variables=std::set<std::string>();
-            for(unsigned i=0; i<m.size(); ++i) {
-                auto extracted_val = m[i].str();
-                //if(extracted_val.find("{") == std::string::npos) continue;
-                auto val = m[i].str().substr(2, m[i].str().size() - 3);
-                variables.insert(val);
-            }
-            for(auto variable:variables){
-                auto unrolled = std::getenv(variable.c_str());
-                if(unrolled==NULL) throw ErrorException(UNDEFINED_ENV_VARIABLE,variable.c_str());
-                temp_variable = regex_replace(temp_variable, regexp, unrolled);
-            }
-            return temp_variable;
-        }
-        template <typename T>
-        void config(T &doc, const char *member, uint16_t &variable) {
-            if(!doc.HasMember(member)) return;
-            assert(doc[member].IsInt());
-            variable = atoi(replaceEnvVariable(std::to_string(doc[member].GetInt())).c_str());
-        }
-        template <typename T>
-        void config(T &doc, const char *member, really_long &variable) {
-            if(!doc.HasMember(member)) return;
-            assert(doc[member].IsUint64());
-            variable = atoll(replaceEnvVariable(std::to_string(doc[member].GetUint64())).c_str());
-        }
-
-        template <typename T>
-        void config(T &doc, const char *member, std::string &variable) {
-            if(!doc.HasMember(member)) return;
-            assert(doc[member].IsString());
-            std::string temp_variable = doc[member].GetString();
-            variable = replaceEnvVariable(temp_variable);
-        }
-        template <typename T>
-        void config(T &doc, const char *member, CharStruct &variable) {
-            if(!doc.HasMember(member)) return;
-            assert(doc[member].IsString());
-            std::string temp_variable = doc[member].GetString();
-            variable = CharStruct(replaceEnvVariable(temp_variable));
-        }
-
-        int CountServers(CharStruct server_list_path) {
-            fstream file;
-            int total = 0;
-            file.open(server_list_path.c_str(), ios::in);
-            if (file.is_open()) {
-                std::string file_line;
-                std::string server_node_name;
-                int count;
-                while (getline(file, file_line)) {
-                    if (!file_line.empty()) {
-                        int split_loc = file_line.find(':');  // split to node and net
-                        if (split_loc != std::string::npos) {
-                            server_node_name = file_line.substr(0, split_loc);
-                            count = atoi(file_line.substr(split_loc, std::string::npos).c_str());
-                        } else {
-                            // no special network
-                            server_node_name = file_line;
-                            count = 1;
-                        }
-                        // server list is list of network interfaces
-                        for (int i = 0; i < count; i++) {
-                            total++;
-                        }
-                    }
-                }
-            } else {
-                printf("Error: Can't open server list file %s\n", server_list_path.c_str());
-                exit(EXIT_FAILURE);
-            }
-            file.close();
-            return total;
-        }
-
-    public:
-        CharStruct BYTEFLOW_SIZE_MAP_NAME;
-        CharStruct CONFIGURATION_FILE;
-        uint64_t BYTEFLOW_STAT_PUSH_INTERVAL;
-
-        ConfigurationManager() : BYTEFLOW_SIZE_MAP_NAME("test_byteflow_size_map"),
-                                 BYTEFLOW_STAT_PUSH_INTERVAL(100),
-                                 CONFIGURATION_FILE("/home/user/sentinel/conf/base_rhea.conf"){}
-
-        void LoadConfiguration() {
-            using namespace rapidjson;
-
-            FILE *outfile = fopen(CONFIGURATION_FILE.c_str(), "r");
-            if (outfile == NULL) {
-                printf("Configuration not found %s \n",CONFIGURATION_FILE.c_str());
-                exit(EXIT_FAILURE);
-            }
-            char buf[65536];
-            FileReadStream instream(outfile, buf, sizeof(buf));
-            Document doc;
-            doc.ParseStream<kParseStopWhenDoneFlag>(instream);
-            if (!doc.IsObject()) {
-                std::cout << "Configuration JSON is invalid" << std::endl;
-                fclose(outfile);
-                exit(EXIT_FAILURE);
-            }
+    protected:
+        void LoadChildConfigurations(rapidjson::Document &doc) override {
             config(doc, "CONFIGURATION_FILE", CONFIGURATION_FILE);
             config(doc, "BYTEFLOW_SIZE_MAP_NAME", BYTEFLOW_SIZE_MAP_NAME);
             config(doc, "BYTEFLOW_STAT_PUSH_INTERVAL", BYTEFLOW_STAT_PUSH_INTERVAL);
+        }
 
-            fclose(outfile);
+    public:
+        CharStruct BYTEFLOW_REGULATOR_DIR;
+        uint16_t BYTEFLOW_REGULATOR_SERVER_PORT;
+        uint16_t BYTEFLOW_REGULATOR_RPC_THREADS;
+        CharStruct BYTEFLOW_REGULATOR_HOST;
+        uint16_t BYTEFLOW_REGULATOR_COUNT;
+
+        CharStruct RHEA_CLIENT_SERVICE_DIR;
+        uint16_t RHEA_CLIENT_SERVICE_PORT;
+        uint16_t RHEA_CLIENT_SERVICE_RPC_THREADS;
+        CharStruct RHEA_CLIENT_SERVICE_HOST;
+        uint16_t RHEA_CLIENT_SERVICE_COUNT;
+
+        CharStruct BYTEFLOW_SIZE_MAP_NAME;
+        uint64_t BYTEFLOW_STAT_PUSH_INTERVAL;
+
+        ConfigurationManager() : common::ConfigurationManager(),
+                                 BYTEFLOW_SIZE_MAP_NAME("test_byteflow_size_map"),
+                                 BYTEFLOW_STAT_PUSH_INTERVAL(100),
+                                 RHEA_CLIENT_SERVICE_DIR("/dev/shm/rhea/rhea_client_service"),
+                                 BYTEFLOW_REGULATOR_DIR("/dev/shm/rhea/rhea_byteflow_regulator"),
+                                 BYTEFLOW_REGULATOR_SERVER_PORT(9000),
+                                 BYTEFLOW_REGULATOR_RPC_THREADS(4),
+                                 BYTEFLOW_REGULATOR_HOST("./hostfile_bfr"),
+                                 RHEA_CLIENT_SERVICE_PORT(12000),
+                                 RHEA_CLIENT_SERVICE_RPC_THREADS(4),
+                                 RHEA_CLIENT_SERVICE_HOST("./hostfile_rcs"){
+            this->CONFIGURATION_FILE = CharStruct("/home/user/sentinel/conf/base_rhea.conf");
+        }
+
+        void ConfigureByteflowRegulatorClient() {
+            LoadConfiguration();
+            //port, SERVER_LIST
+            BASKET_CONF->ConfigureDefaultClient(BYTEFLOW_REGULATOR_HOST.c_str());
+            BASKET_CONF->RPC_PORT = BYTEFLOW_REGULATOR_SERVER_PORT;
+        }
+
+        void ConfigureByteflowRegulatorServer() {
+            LoadConfiguration();
+            //port, list of servers, server dir,
+            BASKET_CONF->RPC_THREADS = BYTEFLOW_REGULATOR_RPC_THREADS;
+            BASKET_CONF->MEMORY_ALLOCATED = 1024ULL * 1024ULL * 1ULL;
+            BASKET_CONF->BACKED_FILE_DIR = BYTEFLOW_REGULATOR_DIR;
+            BASKET_CONF->ConfigureDefaultServer(BYTEFLOW_REGULATOR_HOST.c_str());
+            BYTEFLOW_REGULATOR_COUNT = BASKET_CONF->NUM_SERVERS;
+            BASKET_CONF->RPC_PORT = BYTEFLOW_REGULATOR_SERVER_PORT;
+        }
+
+        void ConfigureRheaClient() {
+            LoadConfiguration();
+            //port, SERVER_LIST
+            BASKET_CONF->ConfigureDefaultClient(RHEA_CLIENT_SERVICE_HOST.c_str());
+            BASKET_CONF->RPC_PORT = RHEA_CLIENT_SERVICE_PORT;
+        }
+
+        void ConfigureRheaClientService() {
+            LoadConfiguration();
+            //port, list of servers, server dir,
+            BASKET_CONF->RPC_THREADS = RHEA_CLIENT_SERVICE_RPC_THREADS;
+            BASKET_CONF->MEMORY_ALLOCATED = 1024ULL * 1024ULL * 1ULL;
+            BASKET_CONF->BACKED_FILE_DIR = RHEA_CLIENT_SERVICE_DIR;
+            BASKET_CONF->ConfigureDefaultServer(RHEA_CLIENT_SERVICE_HOST.c_str());
+            RHEA_CLIENT_SERVICE_COUNT = BASKET_CONF->NUM_SERVERS;
+            BASKET_CONF->RPC_PORT = RHEA_CLIENT_SERVICE_PORT;
         }
     };
+}
+
+namespace clmdep_msgpack {
+    MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS) {
+        namespace adaptor {
+            namespace mv1=clmdep_msgpack::v1;
+            template<>
+            struct convert<bip::string> {
+                clmdep_msgpack::object const &operator()(clmdep_msgpack::object const &o, bip::string &v) const {
+                    switch (o.type) {
+                        case clmdep_msgpack::type::BIN:
+                            v.assign(o.via.bin.ptr, o.via.bin.size);
+                            break;
+                        case clmdep_msgpack::type::STR:
+                            v.assign(o.via.str.ptr, o.via.str.size);
+                            break;
+                        default:
+                            throw clmdep_msgpack::type_error();
+                            break;
+                    }
+                    return o;
+                }
+            };
+
+            template<>
+            struct pack<bip::string> {
+                template<typename Stream>
+                clmdep_msgpack::packer<Stream> &
+                operator()(clmdep_msgpack::packer<Stream> &o, const bip::string &v) const {
+                    uint32_t size = checked_get_container_size(v.size());
+                    o.pack_str(size);
+                    o.pack_str_body(v.data(), size);
+                    return o;
+                }
+            };
+
+            template<>
+            struct object<bip::string> {
+                void operator()(clmdep_msgpack::object &o, const bip::string &v) const {
+                    uint32_t size = checked_get_container_size(v.size());
+                    o.type = clmdep_msgpack::type::STR;
+                    o.via.str.ptr = v.data();
+                    o.via.str.size = size;
+                }
+            };
+
+            template<>
+            struct object_with_zone<bip::string> {
+                void operator()(clmdep_msgpack::object::with_zone &o, const bip::string &v) const {
+                    uint32_t size = checked_get_container_size(v.size());
+                    o.type = clmdep_msgpack::type::STR;
+                    char *ptr = static_cast<char *>(o.zone.allocate_align(size, MSGPACK_ZONE_ALIGNOF(char)));
+                    o.via.str.ptr = ptr;
+                    o.via.str.size = size;
+                    std::memcpy(ptr, v.data(), v.size());
+                }
+            };
+        }
+    }
 }
 
 #endif //RHEA_CONFIGURATION_MANAGER_H
