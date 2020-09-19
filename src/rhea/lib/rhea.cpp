@@ -12,7 +12,7 @@ rhea::Client::Client(uint32_t jid, bool is_application): job_id_(jid) {
     auto queue = std::shared_ptr<basket::queue<Parcel>>();
     if(is_application){
         if(BASKET_CONF->MPI_RANK == 0)
-            basket::Singleton<sentinel::job_manager::client>::GetInstance()->SubmitJob(jid);
+            basket::Singleton<sentinel::job_manager::client>::GetInstance()->SubmitJob(jid, RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT);
     }
     MPI_Barrier(MPI_COMM_WORLD);
 }
