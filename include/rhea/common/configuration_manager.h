@@ -59,7 +59,7 @@ namespace rhea {
                                  BYTEFLOW_REGULATOR_HOST("./hostfile_bfr"),
                                  RHEA_CLIENT_SERVICE_PORT(12000),
                                  RHEA_CLIENT_SERVICE_RPC_THREADS(4),
-                                 RHEA_CLIENT_SERVICE_HOST("./hostfile_rcs"){
+                                 RHEA_CLIENT_SERVICE_HOST("/home/jaime/CLionProjects/rhea/sentinel/conf/hostfile"){
             this->CONFIGURATION_FILE = CharStruct("/home/user/sentinel/conf/base_rhea.conf");
         }
 
@@ -85,6 +85,7 @@ namespace rhea {
             LoadConfiguration();
             //port, SERVER_LIST
             BASKET_CONF->ConfigureDefaultClient(RHEA_CLIENT_SERVICE_HOST.c_str());
+            RHEA_CLIENT_SERVICE_COUNT = BASKET_CONF->NUM_SERVERS;
             BASKET_CONF->RPC_PORT = RHEA_CLIENT_SERVICE_PORT;
         }
 
