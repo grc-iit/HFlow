@@ -107,6 +107,13 @@ struct RheaJob : public Job<Parcel> {
     }
 };
 
+extern "C" {
+    std::shared_ptr<Job<Parcel>> create_job_2() {
+        return std::make_shared<RheaJob>(2);
+    }
+    void free_job_2(RheaJob *p) { delete p; }
+}
+
 namespace clmdep_msgpack {
     MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS) {
         namespace mv1 = clmdep_msgpack::v1;

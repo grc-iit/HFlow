@@ -42,3 +42,7 @@ set(RHEA_CLIENT ${RHEA_COMMON} src/rhea/byte_flow_regulator/byte_flow_regulator_
 add_library(rhea_client ${RHEA_CLIENT})
 add_dependencies(rhea_client sentinel)
 target_link_libraries(rhea_client ${LIBS} -L${CMAKE_BINARY_DIR}/sentinel -lsentinel)
+
+add_executable(client test/main.cpp)
+add_dependencies(client rhea)
+target_link_libraries(client ${LIBS} rhea)
