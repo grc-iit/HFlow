@@ -108,10 +108,168 @@ struct RheaJob : public Job<Parcel> {
 };
 
 extern "C" {
-    std::shared_ptr<RheaJob> create_job_2() {
-        return std::make_shared<RheaJob>(2);
-    }
-    void free_job_2(RheaJob *p) { delete p; }
+    std::shared_ptr<Job<Parcel>> create_job_0();
+    void free_job_0(RheaJob *p);
 }
 
+namespace clmdep_msgpack {
+    MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS) {
+        namespace mv1 = clmdep_msgpack::v1;
+
+        namespace adaptor {
+
+            template<>
+            struct convert<Task<Parcel>> {
+                mv1::object const &operator()(mv1::object const &o, Task<Parcel> &input) const {
+                    input.job_id_=o.via.array.ptr[0].as<uint32_t>();
+                    input.id_=o.via.array.ptr[1].as<uint32_t>();
+                    input.type_=o.via.array.ptr[2].as<TaskType>();
+                    input.links=o.via.array.ptr[3].as<std::vector<std::shared_ptr<Task<Parcel>>>>();
+                    return o;
+                }
+            };
+
+            template<>
+            struct pack<Task<Parcel>> {
+                template<typename Stream>
+                packer<Stream> &operator()(mv1::packer<Stream> &o, Task<Parcel> const &input) const {
+                    o.pack_array(4);
+                    o.pack(input.job_id_);
+                    o.pack(input.id_);
+                    o.pack(input.type_);
+                    o.pack(input.links);
+                    return o;
+                }
+            };
+
+            template<>
+            struct object_with_zone<Task<Parcel>> {
+                void operator()(mv1::object::with_zone &o, Task<Parcel> const &input) const {
+                    o.type = type::ARRAY;
+                    o.via.array.size = 4;
+                    o.via.array.ptr = static_cast<clmdep_msgpack::object *>(o.zone.allocate_align(
+                            sizeof(mv1::object) * o.via.array.size, MSGPACK_ZONE_ALIGNOF(mv1::object)));
+                    o.via.array.ptr[0] = mv1::object(input.job_id_, o.zone);
+                    o.via.array.ptr[1] = mv1::object(input.id_, o.zone);
+                    o.via.array.ptr[2] = mv1::object(input.type_, o.zone);
+                    o.via.array.ptr[3] = mv1::object(input.links, o.zone);
+                }
+            };
+
+            template<>
+            struct convert<RheaQueueSourceTask> {
+                mv1::object const &operator()(mv1::object const &o, RheaQueueSourceTask &input) const {
+                    input.job_id_=o.via.array.ptr[0].as<uint32_t>();
+                    input.id_=o.via.array.ptr[1].as<uint32_t>();
+                    input.type_=o.via.array.ptr[2].as<TaskType>();
+                    input.links=o.via.array.ptr[3].as<std::vector<std::shared_ptr<Task<Parcel>>>>();
+                    return o;
+                }
+            };
+
+            template<>
+            struct pack<RheaQueueSourceTask> {
+                template<typename Stream>
+                packer<Stream> &operator()(mv1::packer<Stream> &o, RheaQueueSourceTask const &input) const {
+                    o.pack_array(4);
+                    o.pack(input.job_id_);
+                    o.pack(input.id_);
+                    o.pack(input.type_);
+                    o.pack(input.links);
+                    return o;
+                }
+            };
+
+            template<>
+            struct object_with_zone<RheaQueueSourceTask> {
+                void operator()(mv1::object::with_zone &o, RheaQueueSourceTask const &input) const {
+                    o.type = type::ARRAY;
+                    o.via.array.size = 4;
+                    o.via.array.ptr = static_cast<clmdep_msgpack::object *>(o.zone.allocate_align(
+                            sizeof(mv1::object) * o.via.array.size, MSGPACK_ZONE_ALIGNOF(mv1::object)));
+                    o.via.array.ptr[0] = mv1::object(input.job_id_, o.zone);
+                    o.via.array.ptr[1] = mv1::object(input.id_, o.zone);
+                    o.via.array.ptr[2] = mv1::object(input.type_, o.zone);
+                    o.via.array.ptr[3] = mv1::object(input.links, o.zone);
+                }
+            };
+
+            template<>
+            struct convert<RheaKeyByTask> {
+                mv1::object const &operator()(mv1::object const &o, RheaKeyByTask &input) const {
+                    input.job_id_=o.via.array.ptr[0].as<uint32_t>();
+                    input.id_=o.via.array.ptr[1].as<uint32_t>();
+                    input.type_=o.via.array.ptr[2].as<TaskType>();
+                    input.links=o.via.array.ptr[3].as<std::vector<std::shared_ptr<Task<Parcel>>>>();
+                    return o;
+                }
+            };
+
+            template<>
+            struct pack<RheaKeyByTask> {
+                template<typename Stream>
+                packer<Stream> &operator()(mv1::packer<Stream> &o, RheaKeyByTask const &input) const {
+                    o.pack_array(4);
+                    o.pack(input.job_id_);
+                    o.pack(input.id_);
+                    o.pack(input.type_);
+                    o.pack(input.links);
+                    return o;
+                }
+            };
+
+            template<>
+            struct object_with_zone<RheaKeyByTask> {
+                void operator()(mv1::object::with_zone &o, RheaKeyByTask const &input) const {
+                    o.type = type::ARRAY;
+                    o.via.array.size = 4;
+                    o.via.array.ptr = static_cast<clmdep_msgpack::object *>(o.zone.allocate_align(
+                            sizeof(mv1::object) * o.via.array.size, MSGPACK_ZONE_ALIGNOF(mv1::object)));
+                    o.via.array.ptr[0] = mv1::object(input.job_id_, o.zone);
+                    o.via.array.ptr[1] = mv1::object(input.id_, o.zone);
+                    o.via.array.ptr[2] = mv1::object(input.type_, o.zone);
+                    o.via.array.ptr[3] = mv1::object(input.links, o.zone);
+                }
+            };
+            template<>
+            struct convert<RheaSinkTask> {
+                mv1::object const &operator()(mv1::object const &o, RheaSinkTask &input) const {
+                    input.job_id_=o.via.array.ptr[0].as<uint32_t>();
+                    input.id_=o.via.array.ptr[1].as<uint32_t>();
+                    input.type_=o.via.array.ptr[2].as<TaskType>();
+                    input.links=o.via.array.ptr[3].as<std::vector<std::shared_ptr<Task<Parcel>>>>();
+                    return o;
+                }
+            };
+
+            template<>
+            struct pack<RheaSinkTask> {
+                template<typename Stream>
+                packer<Stream> &operator()(mv1::packer<Stream> &o, RheaSinkTask const &input) const {
+                    o.pack_array(4);
+                    o.pack(input.job_id_);
+                    o.pack(input.id_);
+                    o.pack(input.type_);
+                    o.pack(input.links);
+                    return o;
+                }
+            };
+
+            template<>
+            struct object_with_zone<RheaSinkTask> {
+                void operator()(mv1::object::with_zone &o, RheaSinkTask const &input) const {
+                    o.type = type::ARRAY;
+                    o.via.array.size = 4;
+                    o.via.array.ptr = static_cast<clmdep_msgpack::object *>(o.zone.allocate_align(
+                            sizeof(mv1::object) * o.via.array.size, MSGPACK_ZONE_ALIGNOF(mv1::object)));
+                    o.via.array.ptr[0] = mv1::object(input.job_id_, o.zone);
+                    o.via.array.ptr[1] = mv1::object(input.id_, o.zone);
+                    o.via.array.ptr[2] = mv1::object(input.type_, o.zone);
+                    o.via.array.ptr[3] = mv1::object(input.links, o.zone);
+                }
+            };
+
+        }  // namespace adaptor
+    }
+}  // namespace clmdep_msgpack
 #endif //RHEA_RHEA_JOB_H
