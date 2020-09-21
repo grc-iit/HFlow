@@ -6,77 +6,80 @@
 
 
 
-void rhea::ByteflowPusher::Run(std::future<void> futureObj) {
-    client = std::make_shared<rhea::ByteFlow_Regulator_Client>();
-    RunInternal(std::move(futureObj));
-}
-
-void rhea::ByteflowPusher::RunInternal(std::future<void> futureObj) {
-    std::shared_ptr<basket::unordered_map<uint32_t, size_t>> rhea_size_map = std::make_shared<basket::unordered_map<uint32_t, size_t>>(RHEA_CONF->BYTEFLOW_SIZE_MAP_NAME);
-    while(futureObj.wait_for(std::chrono::milliseconds(RHEA_CONF->BYTEFLOW_STAT_PUSH_INTERVAL)) == std::future_status::timeout){
-        for (auto jobinfo : rhea_size_map->GetAllData()) {
-            client->SetInRate(0, jobinfo.first, jobinfo.second/(100*0.01));
-            // client->SetOutRate(0, );
-        }
+rhea::Client::Client(uint32_t jid, bool is_application): job_id_(jid) {
+    RHEA_CONF->ConfigureRheaClient();
+    warehouse = std::make_shared<basket::unordered_map<CharStruct, bip::string>>();
+    write_queue = std::make_shared<basket::queue<Parcel>>("WRITE_QUEUE");
+    read_queue = std::make_shared<basket::queue<Parcel>>("READ_QUEUE");
+    if(is_application){
+        if(BASKET_CONF->MPI_RANK == 0)
+            basket::Singleton<sentinel::job_manager::client>::GetInstance()->SubmitJob(jid, RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT);
     }
+    MPI_Barrier(MPI_COMM_WORLD);
 }
 
-rhea::Client::Client() {
-    sizes = std::make_shared<basket::unordered_map<uint32_t, size_t>>(RHEA_CONF->BYTEFLOW_SIZE_MAP_NAME);
-    CharStruct log = "./single_node_rhea_queue.log";
-    auto daemon = basket::Singleton<common::Daemon<rhea::ByteflowPusher>>::GetInstance(log);
-    daemon->Run();
+void rhea::Client::FinalizeClient() {
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(BASKET_CONF->MPI_RANK == 0)
+        basket::Singleton<sentinel::job_manager::client>::GetInstance()->TerminateJob(job_id_);
 }
 
-rhea::Client::~Client() {
-
+bool rhea::Client::Publish(Parcel &parcel, char* data) {
+    auto data_str =  bip::string(data);
+    auto status = true;
+    status = status && warehouse->Put(parcel.id_, data_str);
+    status = status && write_queue->Push(parcel, BASKET_CONF->MY_SERVER);
+    return status;
 }
 
-bool rhea::Client::SubmitJob(uint32_t jid) {
-    size_t new_size = 0;
-    sizes->Put(jid, new_size);
-    return basket::Singleton<sentinel::job_manager::client>::GetInstance()->SubmitJob(jid);
+bool rhea::Client::Subscribe(Parcel &parcel, char *data) {
+    auto status = true;
+    status = status && read_queue->Push(parcel, BASKET_CONF->MY_SERVER);
+    std::pair<bool, std::string> result;
+    do{
+        result = warehouse->Get(parcel.id_);
+        if(!result.first) usleep(100);
+        else
+            memcpy(data, result.second.data(), result.second.size());
+    }while(!result.first);
+    return result.first;
 }
 
-bool rhea::Client::TerminateJob(uint32_t jid) {
-    size_t new_size = 0;
-    sizes->Put(jid, new_size);
-    return basket::Singleton<sentinel::job_manager::client>::GetInstance()->TerminateJob(jid);
+std::vector<Parcel> rhea::Client::GetWriteParsel(uint16_t server_id) {
+    float size = write_queue->Size(server_id);
+    auto amount = size * .1 == 0? size : size * .1;
+    auto parcels = std::vector<Parcel>();
+    while(amount > 0){
+        auto value = write_queue->Pop(server_id);
+        if(value.first) parcels.push_back(value.second);
+        else break;
+    }
+    return parcels;
 }
 
-bool rhea::Client::CreateSource(std::string name) {
-    // HCL queues
-    sources[name] = std::make_shared<basket::queue<Parcel>>(name);
-    return true;
+std::vector<Parcel> rhea::Client::GetReadParsel(uint16_t server_id) {
+    float size = read_queue->Size(server_id);
+    auto amount = size * .1 == 0? size : size * .1;
+    auto parcels = std::vector<Parcel>();
+    while(amount > 0){
+        auto value = read_queue->Pop(server_id);
+        if(value.first) parcels.push_back(value.second);
+        else break;
+    }
+    return parcels;
 }
 
-bool rhea::Client::DeleteSource(std::string name) {
-    sources[name] = nullptr;
-    return true;
+std::string rhea::Client::GetData(Parcel &parcel) {
+    auto result = warehouse->Get(parcel.id_);
+    return result.second.c_str();
 }
 
-bool rhea::Client::Publish(std::string srcid, CharStruct message, uint32_t jid) {
-    auto job_info = sizes->Get(jid);
-    auto new_size = job_info.second + message.size();
-    sizes->Put(jid, new_size);
-    auto package = Parcel(message, 0, message.data(), 0, message.size());
-    unsigned short key = 0;
-    sources[srcid]->Push(package, key);
-    return true;
+bool rhea::Client::DeleteData(Parcel &parcel) {
+    auto result = warehouse->Erase(parcel.id_);
+    return result.first;
 }
 
-bool rhea::Client::CreateSink(CharStruct name) {
-    return false;
-}
-
-bool rhea::Client::DeleteSink(CharStruct name) {
-    return false;
-}
-
-bool rhea::Client::SubscribeSink(CharStruct srcid) {
-    return false;
-}
-
-bool rhea::Client::UnsubscribeSink(CharStruct srcid) {
-    return false;
+bool rhea::Client::PutData(Parcel &parcel, char *data) {
+    auto data_str = bip::string(data, parcel.data_size_);
+    return warehouse->Put(parcel.id_,data_str);
 }

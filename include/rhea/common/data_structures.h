@@ -8,10 +8,8 @@
 #include <sentinel/common/data_structures.h>
 
 typedef struct Parcel : public Event {
-
     /*Define the default, copy and move constructor*/
     Parcel() : Event() {}
-    Parcel(CharStruct id_, size_t position_, char *buffer_, uint16_t storage_index_, size_t data_size_) : Event(id_, position_, buffer_, storage_index_, data_size_) {}
 
     Parcel(const Parcel &other) : Event(other) {}
 
@@ -24,29 +22,8 @@ typedef struct Parcel : public Event {
     }
 } Parcel;
 
-typedef struct RheaSourceTask: public SourceTask{
-    RheaSourceTask():SourceTask(){}
 
-    void Execute(){
-        printf("Test RheaSourceTask's execute function....\n");
-    }
-}RheaSourceTask;
 
-typedef struct RheaKeyByTask: public KeyByTask{
-    RheaKeyByTask():KeyByTask(){}
-
-    void Execute(){
-        printf("Test RheaKeyByTask's execute function....\n");
-    }
-}RheaKeyByTask;
-
-typedef struct RheaSinkTask: public SinkTask{
-    RheaSinkTask():SinkTask(){}
-
-    void Execute(){
-        printf("Test RheaSinkTask's execute function....\n");
-    }
-}RheaSinkTask;
 
 namespace clmdep_msgpack {
     MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS) {
@@ -105,95 +82,59 @@ namespace clmdep_msgpack {
                 }
             };
             template<>
-            struct convert<RheaSourceTask> {
-                mv1::object const &operator()(mv1::object const &o, RheaSourceTask &input) const {
-                    input.links = o.via.array.ptr[0].as<std::vector<std::shared_ptr<Task>>>();
+            struct convert<bip::string> {
+                clmdep_msgpack::object const &operator()(clmdep_msgpack::object const &o, bip::string &v) const {
+                    switch (o.type) {
+                        case clmdep_msgpack::type::BIN:
+                            v.assign(o.via.bin.ptr, o.via.bin.size);
+                            break;
+                        case clmdep_msgpack::type::STR:
+                            v.assign(o.via.str.ptr, o.via.str.size);
+                            break;
+                        default:
+                            throw clmdep_msgpack::type_error();
+                            break;
+                    }
                     return o;
                 }
             };
 
             template<>
-            struct pack<RheaSourceTask>{
+            struct pack<bip::string> {
                 template<typename Stream>
-                packer <Stream> &operator()(mv1::packer <Stream> &o, RheaSourceTask const &input) const {
-                    o.pack_array(1);
-                    o.pack(input.links);
+                clmdep_msgpack::packer<Stream> &
+                operator()(clmdep_msgpack::packer<Stream> &o, const bip::string &v) const {
+                    uint32_t size = checked_get_container_size(v.size());
+                    o.pack_str(size);
+                    o.pack_str_body(v.data(), size);
                     return o;
                 }
             };
 
             template<>
-            struct object_with_zone<RheaSourceTask> {
-                void operator()(mv1::object::with_zone &o, RheaSourceTask const &input) const {
-                    o.type = type::ARRAY;
-                    o.via.array.size = 1;
-                    o.via.array.ptr = static_cast<clmdep_msgpack::object *>(o.zone.allocate_align(
-                            sizeof(mv1::object) * o.via.array.size, MSGPACK_ZONE_ALIGNOF(mv1::object)));
-                    o.via.array.ptr[0] = mv1::object(input.links, o.zone);
+            struct object<bip::string> {
+                void operator()(clmdep_msgpack::object &o, const bip::string &v) const {
+                    uint32_t size = checked_get_container_size(v.size());
+                    o.type = clmdep_msgpack::type::STR;
+                    o.via.str.ptr = v.data();
+                    o.via.str.size = size;
                 }
             };
 
             template<>
-            struct convert<RheaKeyByTask> {
-                mv1::object const &operator()(mv1::object const &o, RheaKeyByTask &input) const {
-                    input.links = o.via.array.ptr[0].as<std::vector<std::shared_ptr<Task>>>();
-                    return o;
+            struct object_with_zone<bip::string> {
+                void operator()(clmdep_msgpack::object::with_zone &o, const bip::string &v) const {
+                    uint32_t size = checked_get_container_size(v.size());
+                    o.type = clmdep_msgpack::type::STR;
+                    char *ptr = static_cast<char *>(o.zone.allocate_align(size, MSGPACK_ZONE_ALIGNOF(char)));
+                    o.via.str.ptr = ptr;
+                    o.via.str.size = size;
+                    std::memcpy(ptr, v.data(), v.size());
                 }
             };
-
-            template<>
-            struct pack<RheaKeyByTask>{
-                template<typename Stream>
-                packer <Stream> &operator()(mv1::packer <Stream> &o, RheaKeyByTask const &input) const {
-                    o.pack_array(1);
-                    o.pack(input.links);
-                    return o;
-                }
-            };
-
-            template<>
-            struct object_with_zone<RheaKeyByTask> {
-                void operator()(mv1::object::with_zone &o, SourceTask const &input) const {
-                    o.type = type::ARRAY;
-                    o.via.array.size = 1;
-                    o.via.array.ptr = static_cast<clmdep_msgpack::object *>(o.zone.allocate_align(
-                            sizeof(mv1::object) * o.via.array.size, MSGPACK_ZONE_ALIGNOF(mv1::object)));
-                    o.via.array.ptr[0] = mv1::object(input.links, o.zone);
-                }
-            };
-
-            template<>
-            struct convert<RheaSinkTask> {
-                mv1::object const &operator()(mv1::object const &o, RheaSinkTask &input) const {
-                    input.links = o.via.array.ptr[0].as<std::vector<std::shared_ptr<Task>>>();
-                    return o;
-                }
-            };
-
-            template<>
-            struct pack<RheaSinkTask>{
-                template<typename Stream>
-                packer <Stream> &operator()(mv1::packer <Stream> &o, RheaSinkTask const &input) const {
-                    o.pack_array(1);
-                    o.pack(input.links);
-                    return o;
-                }
-            };
-
-            template<>
-            struct object_with_zone<RheaSinkTask> {
-                void operator()(mv1::object::with_zone &o, RheaSinkTask const &input) const {
-                    o.type = type::ARRAY;
-                    o.via.array.size = 1;
-                    o.via.array.ptr = static_cast<clmdep_msgpack::object *>(o.zone.allocate_align(
-                            sizeof(mv1::object) * o.via.array.size, MSGPACK_ZONE_ALIGNOF(mv1::object)));
-                    o.via.array.ptr[0] = mv1::object(input.links, o.zone);
-                }
-            };
-        }  // namespace adaptor
+        }
     }
-}  // namespace clmdep_msgpack
-
+}
 std::ostream &operator<<(std::ostream &os, Parcel &parcel);
 
 #endif //RHEA_COMMON_DATA_STRUCTURES_H

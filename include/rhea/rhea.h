@@ -7,48 +7,40 @@
 
 #include <sentinel/job_manager/client.h>
 #include <rhea/common/data_structures.h>
-#include <sentinel/common/daemon.h>
+#include <common/daemon.h>
 #include <basket/common/singleton.h>
 #include <basket/queue/queue.h>
 #include <basket/unordered_map/unordered_map.h>
-#include <rhea/client/ByteFlow_Regulator_Client.h>
+#include <rhea/byte_flow_regulator/byte_flow_regulator_client.h>
 #include <rhea/common/configuration_manager.h>
+namespace bip=boost::interprocess;
 
-namespace rhea{
+namespace rhea {
 
-class ByteflowPusher {
-private:
-    std::shared_ptr<rhea::ByteFlow_Regulator_Client> client;
-public:
-    void Run(std::future<void> futureObj);
-    void RunInternal(std::future<void> futureObj);
-};
+    class Client {
+    private:
+        std::shared_ptr<basket::unordered_map<CharStruct, bip::string>> warehouse;
+        std::shared_ptr<basket::queue<Parcel>> write_queue, read_queue;
+        uint32_t job_id_;
+        bool is_application_;
+    public:
+        Client(uint32_t job_id_, bool is_application_=true);
 
-class Client {
-private:
-    std::unordered_map<std::string, std::shared_ptr<basket::queue<Parcel>>> sources;
-    std::shared_ptr<basket::unordered_map<uint32_t, size_t>> sizes;
-public:
-    Client();
-    ~Client();
+        void FinalizeClient();
 
-    // Initialization
-    bool SubmitJob(uint32_t jid);
-    bool TerminateJob(uint32_t jid);
+        bool Publish(Parcel &parcel, char* data);
 
-    // Admin API
+        bool Subscribe(Parcel &parcel, char* data);
 
-    // Source API
-    bool CreateSource(std::string name);
-    bool DeleteSource(std::string name);
-    bool Publish(std::string srcid, CharStruct message, uint32_t jid);
+        std::vector<Parcel> GetWriteParsel(uint16_t server_id);
 
-    // Sink API
-    bool CreateSink(CharStruct name);
-    bool DeleteSink(CharStruct name);
-    bool SubscribeSink(CharStruct srcid);
-    bool UnsubscribeSink(CharStruct srcid);
-};
+        std::vector<Parcel> GetReadParsel(uint16_t server_id);
+
+        std::string GetData(Parcel &parcel);
+        bool PutData(Parcel &parcel,char* data);
+        bool DeleteData(Parcel &parcel);
+
+    };
 }
 
 
