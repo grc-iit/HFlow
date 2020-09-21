@@ -101,8 +101,10 @@ struct RheaJob : public Job<Parcel> {
         source_ = std::make_shared<RheaQueueSourceTask>();
         source_->id_=0;
         auto key_by = std::make_shared<RheaKeyByTask>();
+        key_by->id_=1;
         source_->links.push_back(key_by);
         auto sink = std::make_shared<RheaSinkTask>();
+        sink->id_=2;
         key_by->links.push_back(sink);
     }
 };
