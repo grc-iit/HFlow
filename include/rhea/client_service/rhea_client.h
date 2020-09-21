@@ -20,7 +20,7 @@ namespace rhea{
         basket::queue<Parcel> queue;
         common::Daemon<RheaClient> * daemon;
     public:
-        RheaClient():warehouse(RHEA_CONF->BYTEFLOW_SIZE_MAP_NAME),queue(){}
+        RheaClient():warehouse(),queue(){}
         void Run(std::future<void> futureObj,common::Daemon<RheaClient> * obj);
         void RunInternal(std::future<void> futureObj);
     };

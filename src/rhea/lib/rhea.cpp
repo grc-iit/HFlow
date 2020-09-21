@@ -8,8 +8,8 @@
 
 rhea::Client::Client(uint32_t jid, bool is_application): job_id_(jid) {
     RHEA_CONF->ConfigureRheaClient();
-    auto warehouse = std::shared_ptr<basket::unordered_map<uint32_t, size_t>>();
-    auto queue = std::shared_ptr<basket::queue<Parcel>>();
+    warehouse = std::make_shared<basket::unordered_map<CharStruct, bip::string>>();
+    queue = std::make_shared<basket::queue<Parcel>>();
     if(is_application){
         if(BASKET_CONF->MPI_RANK == 0)
             basket::Singleton<sentinel::job_manager::client>::GetInstance()->SubmitJob(jid, RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT);

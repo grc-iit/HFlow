@@ -15,7 +15,7 @@ int main(int argc, char* argv[]){
     if(argc > 1) RHEA_CONF->CONFIGURATION_FILE = argv[1];
     BASKET_CONF->BACKED_FILE_DIR = RHEA_CONF->RHEA_CLIENT_SERVICE_DIR;
     CharStruct log = "./single_node_byteflow_regulator.log";
-    RHEA_CONF->ConfigureRheaClient();
+    RHEA_CONF->ConfigureRheaClientService();
     auto daemon = basket::Singleton<common::Daemon<rhea::RheaClient>>::GetInstance(log);
     daemon->Run();
     return 0;
