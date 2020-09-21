@@ -31,6 +31,16 @@ namespace rhea {
             config(doc, "CONFIGURATION_FILE", CONFIGURATION_FILE);
             config(doc, "BYTEFLOW_SIZE_MAP_NAME", BYTEFLOW_SIZE_MAP_NAME);
             config(doc, "BYTEFLOW_STAT_PUSH_INTERVAL", BYTEFLOW_STAT_PUSH_INTERVAL);
+            config(doc, "RHEA_CLIENT_SERVICE_DIR", RHEA_CLIENT_SERVICE_DIR);
+            config(doc, "BYTEFLOW_REGULATOR_DIR", BYTEFLOW_REGULATOR_DIR);
+            config(doc, "BYTEFLOW_REGULATOR_SERVER_PORT", BYTEFLOW_REGULATOR_SERVER_PORT);
+            config(doc, "BYTEFLOW_REGULATOR_RPC_THREADS", BYTEFLOW_REGULATOR_RPC_THREADS);
+            config(doc, "BYTEFLOW_REGULATOR_HOST", BYTEFLOW_REGULATOR_HOST);
+            config(doc, "RHEA_CLIENT_SERVICE_PORT", RHEA_CLIENT_SERVICE_PORT);
+            config(doc, "RHEA_CLIENT_SERVICE_RPC_THREADS", RHEA_CLIENT_SERVICE_RPC_THREADS);
+            config(doc, "RHEA_CLIENT_SERVICE_HOST", RHEA_CLIENT_SERVICE_HOST);
+            boost::filesystem::create_directories(RHEA_CLIENT_SERVICE_DIR.c_str());
+            boost::filesystem::create_directories(BYTEFLOW_REGULATOR_DIR.c_str());
         }
 
     public:
@@ -56,10 +66,10 @@ namespace rhea {
                                  BYTEFLOW_REGULATOR_DIR("/dev/shm/rhea/rhea_byteflow_regulator"),
                                  BYTEFLOW_REGULATOR_SERVER_PORT(9000),
                                  BYTEFLOW_REGULATOR_RPC_THREADS(4),
-                                 BYTEFLOW_REGULATOR_HOST("./hostfile_bfr"),
+                                 BYTEFLOW_REGULATOR_HOST("${HOME}/projects/rhea/sentinel/conf/hostfile"),
                                  RHEA_CLIENT_SERVICE_PORT(12000),
                                  RHEA_CLIENT_SERVICE_RPC_THREADS(4),
-                                 RHEA_CLIENT_SERVICE_HOST("./hostfile_rcs"){
+                                 RHEA_CLIENT_SERVICE_HOST("${HOME}/projects/rhea/sentinel/conf/hostfile"){
             this->CONFIGURATION_FILE = CharStruct("/home/user/sentinel/conf/base_rhea.conf");
         }
 
@@ -68,6 +78,7 @@ namespace rhea {
             //port, SERVER_LIST
             BASKET_CONF->ConfigureDefaultClient(BYTEFLOW_REGULATOR_HOST.c_str());
             BASKET_CONF->RPC_PORT = BYTEFLOW_REGULATOR_SERVER_PORT;
+            BYTEFLOW_REGULATOR_COUNT = BASKET_CONF->NUM_SERVERS;
         }
 
         void ConfigureByteflowRegulatorServer() {
@@ -86,6 +97,7 @@ namespace rhea {
             //port, SERVER_LIST
             BASKET_CONF->ConfigureDefaultClient(RHEA_CLIENT_SERVICE_HOST.c_str());
             BASKET_CONF->RPC_PORT = RHEA_CLIENT_SERVICE_PORT;
+            RHEA_CLIENT_SERVICE_COUNT = BASKET_CONF->NUM_SERVERS;
         }
 
         void ConfigureRheaClientService() {

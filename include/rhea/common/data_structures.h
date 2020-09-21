@@ -8,18 +8,16 @@
 #include <sentinel/common/data_structures.h>
 
 typedef struct Parcel : public Event {
-    uint16_t storage_index_;
     /*Define the default, copy and move constructor*/
-    Parcel() : Event(),storage_index_() {}
+    Parcel() : Event() {}
 
-    Parcel(const Parcel &other) : Event(other),storage_index_(other.storage_index_) {}
+    Parcel(const Parcel &other) : Event(other) {}
 
-    Parcel(Parcel &other) : Event(other),storage_index_(other.storage_index_) {}
+    Parcel(Parcel &other) : Event(other) {}
 
     /*Define Assignment Operator*/
     Parcel &operator=(const Parcel &other) {
         Event::operator=(other);
-        storage_index_=other.storage_index_;
         return *this;
     }
 } Parcel;
