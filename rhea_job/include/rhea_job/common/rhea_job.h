@@ -26,7 +26,7 @@ protected:
     Parcel Run(Parcel &event) override {
         while(true){
             auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
-            auto parsels = client->GetParsel(server_id);
+            auto parsels = client->GetWriteParsel(server_id);
             if(parsels.size() == 0) {
                 usleep(100);
                 continue;
@@ -34,6 +34,7 @@ protected:
             for(auto parsel:parsels){
                 std::string data = client->GetData(parsel);
                 Parcel destination = parsel;
+                destination.id_+="_temp";
                 Parcel source = parsel;
                 source.buffer_=data.data();
                 basket::Singleton<FileIOClient>::GetInstance(0)->Write(source,destination); //TODO: FIX ME: getInstance should use redis
@@ -63,7 +64,7 @@ protected:
     Parcel Run(Parcel &event) override {
         while(true){
             auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
-            auto parsels = client->GetParsel(server_id);
+            auto parsels = client->GetReadParsel(server_id);
             if(parsels.size() == 0) {
                 usleep(100);
                 continue;
@@ -110,9 +111,11 @@ protected:
     void Run(Parcel &event) override {
         Parcel destination = event;
         Parcel source = event;
+        source.id_+="_temp";
         auto redis_client = basket::Singleton<FileIOClient>::GetInstance(0); //TODO: FIX ME: getInstance should use redis
         redis_client->Read(source,destination);
         redis_client->Remove(source);
+        source=event;
         basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Write(destination,source);
     }
 
@@ -132,7 +135,7 @@ protected:
     void Run(Parcel &event) override {
         Parcel destination = event;
         Parcel source = event;
-        basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Write(source,destination);
+        basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Read(source,destination);
         auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
         client->PutData(source,destination.buffer_);
     }

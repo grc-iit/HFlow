@@ -9,7 +9,8 @@
 rhea::Client::Client(uint32_t jid, bool is_application): job_id_(jid) {
     RHEA_CONF->ConfigureRheaClient();
     warehouse = std::make_shared<basket::unordered_map<CharStruct, bip::string>>();
-    queue = std::make_shared<basket::queue<Parcel>>();
+    write_queue = std::make_shared<basket::queue<Parcel>>("WRITE_QUEUE");
+    read_queue = std::make_shared<basket::queue<Parcel>>("READ_QUEUE");
     if(is_application){
         if(BASKET_CONF->MPI_RANK == 0)
             basket::Singleton<sentinel::job_manager::client>::GetInstance()->SubmitJob(jid, RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT);
@@ -27,13 +28,13 @@ bool rhea::Client::Publish(Parcel &parcel, char* data) {
     auto data_str =  bip::string(data);
     auto status = true;
     status = status && warehouse->Put(parcel.id_, data_str);
-    status = status && queue->Push(parcel,BASKET_CONF->MY_SERVER);
+    status = status && write_queue->Push(parcel, BASKET_CONF->MY_SERVER);
     return status;
 }
 
 bool rhea::Client::Subscribe(Parcel &parcel, char *data) {
     auto status = true;
-    status = status && queue->Push(parcel,BASKET_CONF->MY_SERVER);
+    status = status && read_queue->Push(parcel, BASKET_CONF->MY_SERVER);
     std::pair<bool, std::string> result;
     do{
         result = warehouse->Get(parcel.id_);
@@ -44,12 +45,24 @@ bool rhea::Client::Subscribe(Parcel &parcel, char *data) {
     return result.first;
 }
 
-std::vector<Parcel> rhea::Client::GetParsel(uint16_t server_id) {
-    float size = queue->Size(server_id);
+std::vector<Parcel> rhea::Client::GetWriteParsel(uint16_t server_id) {
+    float size = write_queue->Size(server_id);
     auto amount = size * .1 == 0? size : size * .1;
     auto parcels = std::vector<Parcel>();
     while(amount > 0){
-        auto value = queue->Pop(server_id);
+        auto value = write_queue->Pop(server_id);
+        if(value.first) parcels.push_back(value.second);
+        else break;
+    }
+    return parcels;
+}
+
+std::vector<Parcel> rhea::Client::GetReadParsel(uint16_t server_id) {
+    float size = read_queue->Size(server_id);
+    auto amount = size * .1 == 0? size : size * .1;
+    auto parcels = std::vector<Parcel>();
+    while(amount > 0){
+        auto value = read_queue->Pop(server_id);
         if(value.first) parcels.push_back(value.second);
         else break;
     }

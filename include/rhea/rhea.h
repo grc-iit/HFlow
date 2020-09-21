@@ -20,7 +20,7 @@ namespace rhea {
     class Client {
     private:
         std::shared_ptr<basket::unordered_map<CharStruct, bip::string>> warehouse;
-        std::shared_ptr<basket::queue<Parcel>> queue;
+        std::shared_ptr<basket::queue<Parcel>> write_queue, read_queue;
         uint32_t job_id_;
         bool is_application_;
     public:
@@ -32,7 +32,9 @@ namespace rhea {
 
         bool Subscribe(Parcel &parcel, char* data);
 
-        std::vector<Parcel> GetParsel(uint16_t server_id);
+        std::vector<Parcel> GetWriteParsel(uint16_t server_id);
+
+        std::vector<Parcel> GetReadParsel(uint16_t server_id);
 
         std::string GetData(Parcel &parcel);
         bool PutData(Parcel &parcel,char* data);
