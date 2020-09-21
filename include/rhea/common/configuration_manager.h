@@ -78,6 +78,7 @@ namespace rhea {
             //port, SERVER_LIST
             BASKET_CONF->ConfigureDefaultClient(BYTEFLOW_REGULATOR_HOST.c_str());
             BASKET_CONF->RPC_PORT = BYTEFLOW_REGULATOR_SERVER_PORT;
+            BYTEFLOW_REGULATOR_COUNT = BASKET_CONF->NUM_SERVERS;
         }
 
         void ConfigureByteflowRegulatorServer() {
@@ -96,6 +97,7 @@ namespace rhea {
             //port, SERVER_LIST
             BASKET_CONF->ConfigureDefaultClient(RHEA_CLIENT_SERVICE_HOST.c_str());
             BASKET_CONF->RPC_PORT = RHEA_CLIENT_SERVICE_PORT;
+            RHEA_CLIENT_SERVICE_COUNT = BASKET_CONF->NUM_SERVERS;
         }
 
         void ConfigureRheaClientService() {

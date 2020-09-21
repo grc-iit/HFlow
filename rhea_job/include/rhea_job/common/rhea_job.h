@@ -36,7 +36,7 @@ protected:
                 Parcel destination = parsel;
                 Parcel source = parsel;
                 source.buffer_=data.data();
-                basket::Singleton<RedisIOClient>::GetInstance(RHEA_CONF->REDIS_INDEX)->Write(source,destination);
+                basket::Singleton<FileIOClient>::GetInstance(0)->Write(source,destination); //TODO: FIX ME: getInstance should use redis
                 client->DeleteData(parsel);
                 emit(job_id_, id_, parsel);
             }
@@ -78,7 +78,9 @@ protected:
     void Run(Parcel &event) override {
         Parcel destination = event;
         Parcel source = event;
-        basket::Singleton<RedisIOClient>::GetInstance(RHEA_CONF->REDIS_INDEX)->Read(source,destination);
+        auto redis_client = basket::Singleton<FileIOClient>::GetInstance(0); //TODO: FIX ME: getInstance should use redis
+        redis_client->Read(source,destination);
+        redis_client->Remove(source);
         basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Write(destination,source);
     }
 

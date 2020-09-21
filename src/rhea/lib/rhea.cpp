@@ -17,7 +17,7 @@ rhea::Client::Client(uint32_t jid, bool is_application): job_id_(jid) {
     MPI_Barrier(MPI_COMM_WORLD);
 }
 
-rhea::Client::~Client() {
+void rhea::Client::FinalizeClient() {
     MPI_Barrier(MPI_COMM_WORLD);
     if(BASKET_CONF->MPI_RANK == 0)
         basket::Singleton<sentinel::job_manager::client>::GetInstance()->TerminateJob(job_id_);

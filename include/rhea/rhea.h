@@ -26,7 +26,7 @@ namespace rhea {
     public:
         Client(uint32_t job_id_, bool is_application_=true);
 
-        ~Client();
+        void FinalizeClient();
 
         bool Publish(Parcel &parcel, char* data);
 
