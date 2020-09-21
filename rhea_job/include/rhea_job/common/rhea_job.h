@@ -12,10 +12,10 @@
 #include <rhea/rhea.h>
 #include <common/io_clients/io_factory.h>
 
-typedef struct RheaQueueSourceTask : public SourceTask<Parcel> {
+typedef struct RheaWriteQueueSourceTask : public SourceTask<Parcel> {
 
     uint16_t server_id;
-    RheaQueueSourceTask() : SourceTask(),server_id(0) {}
+    RheaWriteQueueSourceTask() : SourceTask(), server_id(0) {}
 
 protected:
     bool Initialize(Parcel &event) override {
@@ -47,7 +47,39 @@ protected:
     bool Finalize(Parcel &event) override {
         return true;
     }
-} RheaQueueSourceTask;
+} RheaWriteQueueSourceTask;
+
+typedef struct RheaReadQueueSourceTask : public SourceTask<Parcel> {
+
+    uint16_t server_id;
+    RheaReadQueueSourceTask() : SourceTask(), server_id(0) {}
+
+protected:
+    bool Initialize(Parcel &event) override {
+        server_id = atoi(event.id_.data());
+        return true;
+    }
+
+    Parcel Run(Parcel &event) override {
+        while(true){
+            auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
+            auto parsels = client->GetParsel(server_id);
+            if(parsels.size() == 0) {
+                usleep(100);
+                continue;
+            }
+            for(auto parsel:parsels){
+                emit(job_id_, id_, parsel);
+            }
+        }
+        return event;
+    }
+
+    bool Finalize(Parcel &event) override {
+        return true;
+    }
+} RheaReadQueueSourceTask;
+
 
 typedef struct RheaKeyByTask : public KeyByTask<Parcel> {
     RheaKeyByTask() : KeyByTask<Parcel>() {}
@@ -67,8 +99,8 @@ protected:
     }
 } RheaKeyByTask;
 
-typedef struct RheaSinkTask : public SinkTask<Parcel> {
-    RheaSinkTask() : SinkTask<Parcel>() {}
+typedef struct RheaWriteSinkTask : public SinkTask<Parcel> {
+    RheaWriteSinkTask() : SinkTask<Parcel>() {}
 
 protected:
     bool Initialize(Parcel &event) override {
@@ -87,38 +119,84 @@ protected:
     bool Finalize(Parcel &event) override {
         return false;
     }
-} RheaSinkTask;
+} RheaWriteSinkTask;
 
-struct RheaJob : public Job<Parcel> {
-    RheaJob(uint32_t job_id):Job<Parcel>(job_id){
+typedef struct RheaReadSinkTask : public SinkTask<Parcel> {
+    RheaReadSinkTask() : SinkTask<Parcel>() {}
+
+protected:
+    bool Initialize(Parcel &event) override {
+        return true;
+    }
+
+    void Run(Parcel &event) override {
+        Parcel destination = event;
+        Parcel source = event;
+        basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Write(source,destination);
+        auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
+        client->PutData(source,destination.buffer_);
+    }
+
+    bool Finalize(Parcel &event) override {
+        return false;
+    }
+} RheaReadSinkTask;
+
+struct RheaWriteJob : public Job<Parcel> {
+    RheaWriteJob(uint32_t job_id): Job<Parcel>(job_id){
         CreateDAG();
     }
-    RheaJob(const RheaJob &other) : Job<Parcel>(other){}
-    RheaJob(RheaJob &other) : Job<Parcel>(other) {}
+    RheaWriteJob(const RheaWriteJob &other) : Job<Parcel>(other){}
+    RheaWriteJob(RheaWriteJob &other) : Job<Parcel>(other) {}
     /*Define Assignment Operator*/
-    RheaJob &operator=(const RheaJob &other) {
+    RheaWriteJob &operator=(const RheaWriteJob &other) {
         Job<Parcel>::operator=(other);
         return *this;
     }
 
     void CreateDAG() override {
-        source_ = std::make_shared<RheaQueueSourceTask>();
+        source_ = std::make_shared<RheaWriteQueueSourceTask>();
         source_->job_id_=job_id_;
         source_->id_=0;
         auto key_by = std::make_shared<RheaKeyByTask>();
         key_by->job_id_=job_id_;
         key_by->id_=1;
         source_->links.push_back(key_by);
-        auto sink = std::make_shared<RheaSinkTask>();
+        auto sink = std::make_shared<RheaWriteSinkTask>();
         sink->job_id_=job_id_;
         sink->id_=2;
         key_by->links.push_back(sink);
     }
 };
 
+struct RheaReadJob : public Job<Parcel> {
+    RheaReadJob(uint32_t job_id): Job<Parcel>(job_id){
+        CreateDAG();
+    }
+    RheaReadJob(const RheaReadJob &other) : Job<Parcel>(other){}
+    RheaReadJob(RheaReadJob &other) : Job<Parcel>(other) {}
+    /*Define Assignment Operator*/
+    RheaReadJob &operator=(const RheaWriteJob &other) {
+        Job<Parcel>::operator=(other);
+        return *this;
+    }
+
+    void CreateDAG() override {
+        source_ = std::make_shared<RheaReadQueueSourceTask>();
+        source_->job_id_=job_id_;
+        source_->id_=0;
+        auto sink = std::make_shared<RheaReadSinkTask>();
+        sink->job_id_=job_id_;
+        sink->id_=1;
+        source_->links.push_back(sink);
+    }
+};
+
 extern "C" {
     std::shared_ptr<Job<Parcel>> create_job_0();
-    void free_job_0(RheaJob *p);
+    void free_job_0(RheaWriteJob *p);
+    std::shared_ptr<Job<Parcel>> create_job_1();
+    void free_job_1(RheaWriteJob *p);
 }
 
 namespace clmdep_msgpack {
@@ -166,8 +244,8 @@ namespace clmdep_msgpack {
             };
 
             template<>
-            struct convert<RheaQueueSourceTask> {
-                mv1::object const &operator()(mv1::object const &o, RheaQueueSourceTask &input) const {
+            struct convert<RheaWriteQueueSourceTask> {
+                mv1::object const &operator()(mv1::object const &o, RheaWriteQueueSourceTask &input) const {
                     input.job_id_=o.via.array.ptr[0].as<uint32_t>();
                     input.id_=o.via.array.ptr[1].as<uint32_t>();
                     input.type_=o.via.array.ptr[2].as<TaskType>();
@@ -177,9 +255,9 @@ namespace clmdep_msgpack {
             };
 
             template<>
-            struct pack<RheaQueueSourceTask> {
+            struct pack<RheaWriteQueueSourceTask> {
                 template<typename Stream>
-                packer<Stream> &operator()(mv1::packer<Stream> &o, RheaQueueSourceTask const &input) const {
+                packer<Stream> &operator()(mv1::packer<Stream> &o, RheaWriteQueueSourceTask const &input) const {
                     o.pack_array(4);
                     o.pack(input.job_id_);
                     o.pack(input.id_);
@@ -190,8 +268,8 @@ namespace clmdep_msgpack {
             };
 
             template<>
-            struct object_with_zone<RheaQueueSourceTask> {
-                void operator()(mv1::object::with_zone &o, RheaQueueSourceTask const &input) const {
+            struct object_with_zone<RheaWriteQueueSourceTask> {
+                void operator()(mv1::object::with_zone &o, RheaWriteQueueSourceTask const &input) const {
                     o.type = type::ARRAY;
                     o.via.array.size = 4;
                     o.via.array.ptr = static_cast<clmdep_msgpack::object *>(o.zone.allocate_align(
@@ -241,8 +319,8 @@ namespace clmdep_msgpack {
                 }
             };
             template<>
-            struct convert<RheaSinkTask> {
-                mv1::object const &operator()(mv1::object const &o, RheaSinkTask &input) const {
+            struct convert<RheaWriteSinkTask> {
+                mv1::object const &operator()(mv1::object const &o, RheaWriteSinkTask &input) const {
                     input.job_id_=o.via.array.ptr[0].as<uint32_t>();
                     input.id_=o.via.array.ptr[1].as<uint32_t>();
                     input.type_=o.via.array.ptr[2].as<TaskType>();
@@ -252,9 +330,9 @@ namespace clmdep_msgpack {
             };
 
             template<>
-            struct pack<RheaSinkTask> {
+            struct pack<RheaWriteSinkTask> {
                 template<typename Stream>
-                packer<Stream> &operator()(mv1::packer<Stream> &o, RheaSinkTask const &input) const {
+                packer<Stream> &operator()(mv1::packer<Stream> &o, RheaWriteSinkTask const &input) const {
                     o.pack_array(4);
                     o.pack(input.job_id_);
                     o.pack(input.id_);
@@ -265,8 +343,8 @@ namespace clmdep_msgpack {
             };
 
             template<>
-            struct object_with_zone<RheaSinkTask> {
-                void operator()(mv1::object::with_zone &o, RheaSinkTask const &input) const {
+            struct object_with_zone<RheaWriteSinkTask> {
+                void operator()(mv1::object::with_zone &o, RheaWriteSinkTask const &input) const {
                     o.type = type::ARRAY;
                     o.via.array.size = 4;
                     o.via.array.ptr = static_cast<clmdep_msgpack::object *>(o.zone.allocate_align(

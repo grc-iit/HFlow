@@ -11,16 +11,8 @@
 
 int main(int argc, char * argv[]){
     MPI_Init(&argc,&argv);
-    MPI_Barrier(MPI_COMM_WORLD);
-
     uint32_t jobId = 0;
-
-//    COMMON_CONF;
-//    auto classLoader = ClassLoader();
-//    std::shared_ptr<Job<Event>> job = classLoader.LoadClass<Job<Event>>(jobId);
-
-    rhea::Client client(jobId);
-
+    rhea::Client write_client(jobId);
     Parcel parcel;
     parcel.id_="/home/jaime/projects/rhea/test/test_file.txt";
     parcel.storage_index_=0;
@@ -29,9 +21,17 @@ int main(int argc, char * argv[]){
     parcel.data_size_=4;
     parcel.buffer_="abcd";
     char* data = "abcd";
-    client.Publish(parcel, data);
+    write_client.Publish(parcel, data);
+    uint32_t read_jobId = 1;
+    rhea::Client read_client(read_jobId);
 
-    client.FinalizeClient();
+    char* return_data = (char*)malloc(strlen(data)+1);
+    read_client.Subscribe(parcel, data);
 
+    if(strcmp(data,return_data) != 0){
+        exit(EXIT_FAILURE);
+    }
+    read_client.FinalizeClient();
+    write_client.FinalizeClient();
     MPI_Finalize();
 }

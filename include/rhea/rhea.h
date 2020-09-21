@@ -35,6 +35,7 @@ namespace rhea {
         std::vector<Parcel> GetParsel(uint16_t server_id);
 
         std::string GetData(Parcel &parcel);
+        bool PutData(Parcel &parcel,char* data);
         bool DeleteData(Parcel &parcel);
 
     };

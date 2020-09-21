@@ -38,7 +38,8 @@ bool rhea::Client::Subscribe(Parcel &parcel, char *data) {
     do{
         result = warehouse->Get(parcel.id_);
         if(!result.first) usleep(100);
-        else memcpy(data, result.second.data(), result.second.size());
+        else
+            memcpy(data, result.second.data(), result.second.size());
     }while(!result.first);
     return result.first;
 }
@@ -63,4 +64,9 @@ std::string rhea::Client::GetData(Parcel &parcel) {
 bool rhea::Client::DeleteData(Parcel &parcel) {
     auto result = warehouse->Erase(parcel.id_);
     return result.first;
+}
+
+bool rhea::Client::PutData(Parcel &parcel, char *data) {
+    auto data_str = bip::string(data, parcel.data_size_);
+    return warehouse->Put(parcel.id_,data_str);
 }
