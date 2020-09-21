@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(rhea VERSION 1.0.0 DESCRIPTION "")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -g -DBASKET_ENABLE_RPCLIB")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -g -DBASKET_ENABLE_RPCLIB") #TODO: FIXME: Enable -DENABLE_REDIS_IOCLIENT
 
 add_subdirectory(scs_io_common)
 include_directories(scs_io_common/include)
@@ -10,6 +10,9 @@ include_directories(scs_io_common/include)
 add_subdirectory(sentinel)
 include_directories(sentinel/include)
 add_dependencies(sentinel scs_io_common)
+
+add_subdirectory(rhea_job)
+add_dependencies(rhea_job sentinel)
 
 include_directories(src)
 include_directories(include)
@@ -39,3 +42,7 @@ set(RHEA_CLIENT ${RHEA_COMMON} src/rhea/byte_flow_regulator/byte_flow_regulator_
 add_library(rhea_client ${RHEA_CLIENT})
 add_dependencies(rhea_client sentinel)
 target_link_libraries(rhea_client ${LIBS} -L${CMAKE_BINARY_DIR}/sentinel -lsentinel)
+
+add_executable(client test/main.cpp)
+add_dependencies(client rhea)
+target_link_libraries(client ${LIBS} rhea sentinel)
