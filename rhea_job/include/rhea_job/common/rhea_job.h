@@ -13,19 +13,19 @@
 #include <common/io_clients/io_factory.h>
 
 typedef struct RheaQueueSourceTask : public SourceTask<Parcel> {
-    std::shared_ptr<rhea::Client> client;
+
     uint16_t server_id;
     RheaQueueSourceTask() : SourceTask(),server_id(0) {}
 
 protected:
     bool Initialize(Parcel &event) override {
-        client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
         server_id = atoi(event.id_.data());
         return true;
     }
 
     Parcel Run(Parcel &event) override {
         while(true){
+            auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
             auto parsels = client->GetParsel(server_id);
             if(parsels.size() == 0) {
                 usleep(100);
@@ -88,7 +88,9 @@ protected:
 } RheaSinkTask;
 
 struct RheaJob : public Job<Parcel> {
-    RheaJob(uint32_t job_id):Job<Parcel>(job_id){}
+    RheaJob(uint32_t job_id):Job<Parcel>(job_id){
+        CreateDAG();
+    }
     RheaJob(const RheaJob &other) : Job<Parcel>(other){}
     RheaJob(RheaJob &other) : Job<Parcel>(other) {}
     /*Define Assignment Operator*/
@@ -99,11 +101,14 @@ struct RheaJob : public Job<Parcel> {
 
     void CreateDAG() override {
         source_ = std::make_shared<RheaQueueSourceTask>();
+        source_->job_id_=job_id_;
         source_->id_=0;
         auto key_by = std::make_shared<RheaKeyByTask>();
+        key_by->job_id_=job_id_;
         key_by->id_=1;
         source_->links.push_back(key_by);
         auto sink = std::make_shared<RheaSinkTask>();
+        sink->job_id_=job_id_;
         sink->id_=2;
         key_by->links.push_back(sink);
     }
