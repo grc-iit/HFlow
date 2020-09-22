@@ -35,6 +35,7 @@ int main(int argc, char* argv[]){
     RHEA_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
     CharStruct log = "./single_node_byteflow_regulator.log";
     COMMON_CONF->LoadConfiguration();
+    RHEA_CONF->ConfigureRheaClientService();
     auto daemon = basket::Singleton<common::Daemon<rhea::RheaClient>>::GetInstance(log);
     daemon->Run();
     return 0;
