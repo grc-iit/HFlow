@@ -31,10 +31,10 @@ int main(int argc, char* argv[]){
     MPI_Init(&argc,&argv);
     MPI_Barrier(MPI_COMM_WORLD);
     RheaClientArgs args(argc, argv);
+    COMMON_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
     RHEA_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
-    BASKET_CONF->BACKED_FILE_DIR = RHEA_CONF->RHEA_CLIENT_SERVICE_DIR;
     CharStruct log = "./single_node_byteflow_regulator.log";
-    RHEA_CONF->ConfigureRheaClientService();
+    COMMON_CONF->LoadConfiguration();
     auto daemon = basket::Singleton<common::Daemon<rhea::RheaClient>>::GetInstance(log);
     daemon->Run();
     return 0;

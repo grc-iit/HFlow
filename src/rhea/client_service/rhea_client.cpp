@@ -7,6 +7,7 @@
 
 void rhea::RheaClient::Run(std::future<void> futureObj,common::Daemon<RheaClient> * obj) {
     daemon = obj;
+    RHEA_CONF->ConfigureRheaClientService();
     RunInternal(std::move(futureObj));
 }
 

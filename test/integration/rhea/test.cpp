@@ -64,6 +64,7 @@ int main(int argc, char* argv[]){
     COMMON_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
     SENTINEL_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
     RHEA_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
+    COMMON_CONF->LoadConfiguration();
 
     //Allocate block
     char *data = (char*)malloc(bs);
