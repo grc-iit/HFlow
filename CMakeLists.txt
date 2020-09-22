@@ -43,6 +43,4 @@ add_library(rhea_client ${RHEA_CLIENT})
 add_dependencies(rhea_client sentinel)
 target_link_libraries(rhea_client ${LIBS} -L${CMAKE_BINARY_DIR}/sentinel -lsentinel)
 
-add_executable(client test/main.cpp)
-add_dependencies(client rhea)
-target_link_libraries(client ${LIBS} rhea sentinel)
+add_subdirectory(test)
