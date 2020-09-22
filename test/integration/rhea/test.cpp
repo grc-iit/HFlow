@@ -37,7 +37,7 @@ public:
         AddOpt("-rc", common::args::ArgType::kInt, 1);
         AddOpt("-wc", common::args::ArgType::kInt, 1);
         AddOpt("-base", common::args::ArgType::kString, "/tmp");
-        AddOpt("-config", common::args::ArgType::kString, "");
+        AddOpt("-conf", common::args::ArgType::kString, "");
         ArgIter(argc, argv);
         VerifyArgs();
     }
@@ -59,6 +59,11 @@ int main(int argc, char* argv[]){
     int sink_group = rank/clients_per_file;
     int sink_member = rank%clients_per_file;
     std::string base = args.GetStringOpt("-base") + "/test" + std::to_string(sink_group) + ".txt";
+
+    //Set configuration files
+    COMMON_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
+    SENTINEL_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
+    RHEA_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
 
     //Allocate block
     char *data = (char*)malloc(bs);
