@@ -48,4 +48,4 @@ add_library(rhea_client ${RHEA_CLIENT})
 add_dependencies(rhea_client sentinel)
 target_link_libraries(rhea_client ${LIBS} -L${CMAKE_BINARY_DIR}/sentinel -lsentinel)
 
-add_subdirectory(test)
+add_subdirectory(test/integration)
