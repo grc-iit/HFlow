@@ -64,6 +64,7 @@ protected:
 
     Parcel Run(Parcel &event) override {
         while(true){
+            RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
             auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
             auto parsels = client->GetReadParsel(server_id);
             if(parsels.size() == 0) {
@@ -113,6 +114,7 @@ protected:
         Parcel destination = event;
         Parcel source = event;
         source.id_+="_temp";
+        RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
         auto redis_client = basket::Singleton<FileIOClient>::GetInstance(0); //TODO: FIX ME: getInstance should use redis
         redis_client->Read(source,destination);
         redis_client->Remove(source);
@@ -136,6 +138,7 @@ protected:
     void Run(Parcel &event) override {
         Parcel destination = event;
         Parcel source = event;
+        RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
         basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Read(source,destination);
         auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
         client->PutData(source,destination.buffer_);

@@ -79,9 +79,8 @@ int main(int argc, char* argv[]){
         parcel.id_ = base;
         parcel.storage_index_ = 0;
         parcel.type_ = OperationType::PUBLISH;
-        parcel.position_ = sink_member*bs;
+        parcel.position_ = sink_member*bs*wc + i*bs;
         parcel.data_size_ = bs;
-        parcel.buffer_ = data;
         write_client.Publish(parcel, data);
     }
 
@@ -92,9 +91,8 @@ int main(int argc, char* argv[]){
         parcel.id_ = base;
         parcel.storage_index_ = 0;
         parcel.type_ = OperationType::SUBSCRIBE;
-        parcel.position_ = sink_member*bs;
+        parcel.position_ = sink_member*bs*wc + i*bs;
         parcel.data_size_ = bs;
-        parcel.buffer_ = data;
         memset(data, 0, bs);
         read_client.Subscribe(parcel, data);
         if (strncmp(data, data_save, bs) != 0) {
