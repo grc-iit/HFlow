@@ -32,21 +32,24 @@ namespace rhea{
     private:
         // make all these maps against job_id
         time_t interval;
-        uint_fast16_t variation;
-        uint_fast64_t step;
+        // TODO: modify the type of variation and step to int_fast16_t
+        int_fast16_t variation;
+        int_fast64_t step;
         std::shared_ptr<RPC> client_rpc_;
 
         std::unordered_map<uint16_t, uint_fast32_t> in_rate_map;
         std::unordered_map<uint16_t, uint_fast32_t> out_rate_map;
-        bool AlterCollector(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate);
-        bool AlterTransformers(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate);
-        bool AlterNodes(uint16_t job_id, uint_fast64_t out_rate, uint_fast64_t in_rate);
+        // TODO: modify the type of out_rate and in_rate from uint_fast64_t to uint_fast32_t
+        bool AlterCollector(uint16_t job_id, uint_fast32_t out_rate, uint_fast32_t in_rate);
+        bool AlterTransformers(uint16_t job_id, uint_fast32_t out_rate, uint_fast32_t in_rate);
+        bool AlterNodes(uint16_t job_id, uint_fast32_t out_rate, uint_fast32_t in_rate);
         void RunInternal(std::future<void> futureObj);
         common::Daemon<ByteFlowRegulatorServer> * daemon;
     public:
         void Run(std::future<void> futureObj, common::Daemon<ByteFlowRegulatorServer>* obj);
-        void SetInRate(uint16_t job_id, uint_fast32_t in_rate);
-        void SetOutRate(uint16_t job_id, uint_fast32_t out_rate);
+        //TODO: modify the return type to bool
+        bool SetInRate(uint16_t job_id, uint_fast32_t in_rate);
+        bool SetOutRate(uint16_t job_id, uint_fast32_t out_rate);
 
         ByteFlowRegulatorServer(){
             interval = DEFAULT_INTERVAL;
@@ -55,10 +58,10 @@ namespace rhea{
             RHEA_CONF->ConfigureByteflowRegulatorServer();
             auto basket=BASKET_CONF;
             client_rpc_=basket::Singleton<RPCFactory>::GetInstance()->GetRPC(BASKET_CONF->RPC_PORT);
-            std::function<void(uint16_t, uint_fast32_t)> functionSetInRate(std::bind(&rhea::ByteFlowRegulatorServer::SetInRate, this, std::placeholders::_1, std::placeholders::_2));
+            std::function<bool(uint16_t, uint_fast32_t)> functionSetInRate(std::bind(&rhea::ByteFlowRegulatorServer::SetInRate, this, std::placeholders::_1, std::placeholders::_2));
             client_rpc_->bind("SetInRate", functionSetInRate);
-            std:function<void(uint16_t, uint_fast32_t)> functionSetOutRate(std::bind(&rhea::ByteFlowRegulatorServer::SetOutRate, this, std::placeholders::_1, std::placeholders::_2));
-            client_rpc_->bind("setOutRate", functionSetOutRate);
+            std:function<bool(uint16_t, uint_fast32_t)> functionSetOutRate(std::bind(&rhea::ByteFlowRegulatorServer::SetOutRate, this, std::placeholders::_1, std::placeholders::_2));
+            client_rpc_->bind("SetOutRate", functionSetOutRate);
         }
     };
 }
