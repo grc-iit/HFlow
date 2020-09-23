@@ -26,9 +26,7 @@ namespace rhea {
 
     protected:
         void LoadChildConfigurations(void *doc_) override {
-            rapidjson::Document* doc=NULL;
-            if(doc !=NULL) doc = (rapidjson::Document*)doc_;
-            config(doc, "CONFIGURATION_FILE", CONFIGURATION_FILE);
+            rapidjson::Document* doc = (rapidjson::Document*)doc_;
             config(doc, "BYTEFLOW_SIZE_MAP_NAME", BYTEFLOW_SIZE_MAP_NAME);
             config(doc, "BYTEFLOW_STAT_PUSH_INTERVAL", BYTEFLOW_STAT_PUSH_INTERVAL);
             config(doc, "RHEA_CLIENT_SERVICE_DIR", RHEA_CLIENT_SERVICE_DIR);
@@ -59,7 +57,7 @@ namespace rhea {
         CharStruct BYTEFLOW_SIZE_MAP_NAME;
         uint64_t BYTEFLOW_STAT_PUSH_INTERVAL;
 
-        ConfigurationManager() : common::ConfigurationManager(),
+        ConfigurationManager() : common::ConfigurationManager("/home/user/sentinel/conf/base_rhea.conf"),
                                  BYTEFLOW_SIZE_MAP_NAME("test_byteflow_size_map"),
                                  BYTEFLOW_STAT_PUSH_INTERVAL(100),
                                  RHEA_CLIENT_SERVICE_DIR("/dev/shm/rhea/rhea_client_service"),
@@ -69,9 +67,7 @@ namespace rhea {
                                  BYTEFLOW_REGULATOR_HOST("${HOME}/projects/rhea/sentinel/conf/hostfile"),
                                  RHEA_CLIENT_SERVICE_PORT(12000),
                                  RHEA_CLIENT_SERVICE_RPC_THREADS(4),
-                                 RHEA_CLIENT_SERVICE_HOST("${HOME}/projects/rhea/sentinel/conf/hostfile"){
-            this->CONFIGURATION_FILE = CharStruct("/home/user/sentinel/conf/base_rhea.conf");
-        }
+                                 RHEA_CLIENT_SERVICE_HOST("${HOME}/projects/rhea/sentinel/conf/hostfile") {}
 
         void ConfigureByteflowRegulatorClient() {
             LoadConfiguration();

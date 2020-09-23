@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(rhea VERSION 1.0.0 DESCRIPTION "")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -g -DBASKET_ENABLE_RPCLIB") #TODO: FIXME: Enable -DENABLE_REDIS_IOCLIENT
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -g -DBASKET_ENABLE_RPCLIB -DCOMMON_DEBUG_TRACE") #TODO: FIXME: Enable -DENABLE_REDIS_IOCLIENT
 
 add_subdirectory(scs_io_common)
 include_directories(scs_io_common/include)
@@ -18,6 +18,11 @@ include_directories(src)
 include_directories(include)
 
 set(LIBS -lpthread -lbasket -lrpc  -lboost_system -lboost_filesystem -lmpi -ldl -L${CMAKE_BINARY_DIR}/scs_io_common -lscs_io_common)
+
+#Debug flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMON_DEBUG_MSG")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMON_DEBUG_TIMER")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMON_DEBUG_TRACE")
 
 set(RHEA_COMMON include/rhea/common/configuration_manager.h
                 include/rhea/common/data_structures.h
@@ -43,6 +48,4 @@ add_library(rhea_client ${RHEA_CLIENT})
 add_dependencies(rhea_client sentinel)
 target_link_libraries(rhea_client ${LIBS} -L${CMAKE_BINARY_DIR}/sentinel -lsentinel)
 
-add_executable(client test/main.cpp)
-add_dependencies(client rhea)
-target_link_libraries(client ${LIBS} rhea sentinel)
+add_subdirectory(test)
