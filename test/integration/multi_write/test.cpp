@@ -35,6 +35,8 @@ int main(int argc, char * argv[]){
     for(int size : request_size) { for (int number : request_number) {payload_size+=(size*number);}}
     std::string payload = random_string(payload_size);
 
+    std::cout << payload << std::endl;
+
     uint32_t jobId = 0;
     rhea::Client write_client(jobId);
 //    sleep(5);
@@ -57,6 +59,20 @@ int main(int argc, char * argv[]){
             }
         }
     }
+
+//    for(int size : request_size) {
+//        write_parcel.data_size_=size;
+//        for (int number : request_number) {
+//            int offset=0;
+//            write_parcel.id_= "/home/jaime/projects/rhea/test/test_results/test_" + std::to_string(size) + "_" + std::to_string(number);
+//            for(int i=0; i < number; i++){
+//                write_parcel.position_=offset;
+//                auto rhea_data = write_client.GetData(write_parcel);
+//                offset+=size;
+//                std::cout << write_parcel.position_ << ": " << rhea_data << std::endl;
+//            }
+//        }
+//    }
 
 //    uint32_t read_jobId = 1;
 //    rhea::Client read_client(read_jobId);
