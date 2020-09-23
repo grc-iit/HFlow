@@ -31,18 +31,18 @@ protected:
                 usleep(100);
                 continue;
             }
-            for(auto parsel:parsels){
-                AUTO_TRACER("rhea_job::Source", event.position_);
-                std::string data = client->GetData(parsel);
-                Parcel destination = parsel;
-                destination.id_+="_temp";
+            for(auto parcel:parsels){
+                std::string data = client->GetData(parcel);
+                AUTO_TRACER("rhea_job::Source", data);
+                Parcel destination = parcel;
+                destination.id_+="_temp"+ std::to_string(parcel.position_);
                 destination.position_=0;
-                Parcel source = parsel;
+                Parcel source = parcel;
                 source.position_=0;
                 source.buffer_=data.data();
                 basket::Singleton<FileIOClient>::GetInstance(0)->Write(source,destination); //TODO: FIX ME: getInstance should use redis
-                client->DeleteData(parsel);
-                emit(job_id_, id_, parsel);
+                client->DeleteData(parcel);
+                emit(job_id_, id_, parcel);
             }
         }
         return event;
@@ -116,7 +116,7 @@ protected:
         AUTO_TRACER("rhea_job::sink", event.position_);
         Parcel destination = event;
         Parcel source = event;
-        source.id_+="_temp";
+        source.id_+="_temp"+ std::to_string(event.position_);
         source.position_=0;
         destination.position_=0;
         auto redis_client = basket::Singleton<FileIOClient>::GetInstance(0); //TODO: FIX ME: getInstance should use redis
