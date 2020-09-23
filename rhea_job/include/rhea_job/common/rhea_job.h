@@ -25,6 +25,7 @@ protected:
 
     Parcel Run(Parcel &event) override {
         while(true){
+            RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
             auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
             auto parsels = client->GetWriteParsel(server_id);
             if(parsels.size() == 0) {
