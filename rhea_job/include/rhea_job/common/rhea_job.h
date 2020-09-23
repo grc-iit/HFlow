@@ -32,15 +32,18 @@ protected:
                 usleep(100);
                 continue;
             }
-            for(auto parsel:parsels){
-                std::string data = client->GetData(parsel);
-                Parcel destination = parsel;
-                destination.id_+="_temp";
-                Parcel source = parsel;
+            for(auto parcel:parsels){
+                std::string data = client->GetData(parcel);
+                AUTO_TRACER("rhea_job::Source", data);
+                Parcel destination = parcel;
+                destination.id_+="_temp"+ std::to_string(parcel.position_);
+                destination.position_=0;
+                Parcel source = parcel;
+                source.position_=0;
                 source.buffer_=data.data();
                 basket::Singleton<FileIOClient>::GetInstance(0)->Write(source,destination); //TODO: FIX ME: getInstance should use redis
-                client->DeleteData(parsel);
-                emit(job_id_, id_, parsel);
+                client->DeleteData(parcel);
+                emit(job_id_, id_, parcel);
             }
         }
         return event;
@@ -93,6 +96,7 @@ protected:
     }
 
     size_t Run(Parcel &event) override {
+        AUTO_TRACER("rhea_job::KEYBY", event.position_);
         auto hash = std::hash<std::string>();
         return hash(std::string(event.id_.c_str()));
     }
@@ -111,14 +115,18 @@ protected:
     }
 
     void Run(Parcel &event) override {
+        AUTO_TRACER("rhea_job::sink", event.position_);
         Parcel destination = event;
         Parcel source = event;
-        source.id_+="_temp";
         RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
+        source.id_+="_temp"+ std::to_string(event.position_);
+        source.position_=0;
+        destination.position_=0;
         auto redis_client = basket::Singleton<FileIOClient>::GetInstance(0); //TODO: FIX ME: getInstance should use redis
         redis_client->Read(source,destination);
         redis_client->Remove(source);
-        source=event;
+        source.id_=event.id_;
+        source.position_=event.position_;
         basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Write(destination,source);
     }
 

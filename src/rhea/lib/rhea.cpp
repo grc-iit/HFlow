@@ -21,13 +21,16 @@ rhea::Client::Client(uint32_t jid, bool is_application): job_id_(jid) {
 void rhea::Client::FinalizeClient() {
     MPI_Barrier(MPI_COMM_WORLD);
     if(BASKET_CONF->MPI_RANK == 0)
-        basket::Singleton<sentinel::job_manager::client>::GetInstance()->TerminateJob(job_id_);
+//        basket::Singleton<sentinel::job_manager::client>::GetInstance()->TerminateJob(job_id_);
+        int i =0;
 }
 
 bool rhea::Client::Publish(Parcel &parcel, char* data) {
     auto data_str =  bip::string(data);
     auto status = true;
-    status = status && warehouse->Put(parcel.id_, data_str);
+    auto key = CharStruct(parcel.id_.data() + std::to_string(parcel.position_));
+    AUTO_TRACER("rhea::Client::Publish", key);
+    status = status && warehouse->Put(key, data_str);
     status = status && write_queue->Push(parcel, BASKET_CONF->MY_SERVER);
     return status;
 }
@@ -37,7 +40,9 @@ bool rhea::Client::Subscribe(Parcel &parcel, char *data) {
     status = status && read_queue->Push(parcel, BASKET_CONF->MY_SERVER);
     std::pair<bool, std::string> result;
     do{
-        result = warehouse->Get(parcel.id_);
+        auto key = CharStruct(parcel.id_.data() + std::to_string(parcel.position_));
+        AUTO_TRACER("rhea::Client::Subscribe", key);
+        result = warehouse->Get(key);
         if(!result.first) usleep(100);
         else
             memcpy(data, result.second.data(), result.second.size());
@@ -70,16 +75,22 @@ std::vector<Parcel> rhea::Client::GetReadParsel(uint16_t server_id) {
 }
 
 std::string rhea::Client::GetData(Parcel &parcel) {
-    auto result = warehouse->Get(parcel.id_);
+    auto key = CharStruct(parcel.id_.data() + std::to_string(parcel.position_));
+    AUTO_TRACER("rhea::Client::GetData", key);
+    auto result = warehouse->Get(key);
     return result.second.c_str();
 }
 
 bool rhea::Client::DeleteData(Parcel &parcel) {
-    auto result = warehouse->Erase(parcel.id_);
+    auto key = CharStruct(parcel.id_.data() + std::to_string(parcel.position_));
+    AUTO_TRACER("rhea::Client::DeleteData", key);
+    auto result = warehouse->Erase(key);
     return result.first;
 }
 
 bool rhea::Client::PutData(Parcel &parcel, char *data) {
+    auto key = CharStruct(parcel.id_.data() + std::to_string(parcel.position_));
+    AUTO_TRACER("rhea::Client::PutData", key);
     auto data_str = bip::string(data, parcel.data_size_);
-    return warehouse->Put(parcel.id_,data_str);
+    return warehouse->Put(key,data_str);
 }
