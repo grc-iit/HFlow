@@ -16,12 +16,15 @@ namespace rhea{
             std::shared_ptr<RPC> server_rpc;
         public:
             ByteFlowRegulatorClient(){
-                this->server_rpc = basket::Singleton<RPCFactory>::GetInstance()->GetRPC(BASKET_CONF->RPC_PORT);
+                // TODO: first initial configuration
                 RHEA_CONF->ConfigureByteflowRegulatorClient();
-                auto basket=BASKET_CONF;
+                this->server_rpc = basket::Singleton<RPCFactory>::GetInstance()->GetRPC(BASKET_CONF->RPC_PORT);
+                //RHEA_CONF->ConfigureByteflowRegulatorClient();
+                //auto basket=BASKET_CONF;
             }
-            bool SetInRate(uint8_t server_index_, uint16_t job_id, uint_fast64_t in_rate);
-            bool SetOutRate(uint8_t server_index_, uint16_t job_id, uint_fast64_t out_rate);
+            //TODO: For the second parameter type, client use uint_fast64_t, server-side use uint_fast32_t. Which one do we use?
+            bool SetInRate(uint8_t server_index_, uint16_t job_id, uint_fast32_t in_rate);
+            bool SetOutRate(uint8_t server_index_, uint16_t job_id, uint_fast32_t out_rate);
             void Finalize();
         };
 };
