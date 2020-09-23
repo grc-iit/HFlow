@@ -26,7 +26,7 @@ public:
         std::cout << "-c [int]: The number of clients that will write to the same file. Default is 1." << std::endl;
         std::cout << "-bs [size]: Block size of I/O requests. Default is 4KB." << std::endl;
         std::cout << "-wc [int]: The number of write requests to make. Default is 1." << std::endl;
-        std::cout << "-rc [int]: The number of read requests to make. Default is 1." << std::endl;
+        std::cout << "-rc [int]: The number of read requests to make. Default is 0." << std::endl;
         std::cout << "-base [string]: The directory that will be used to store temp data. Default /tmp." << std::endl;
         std::cout << "-conf [string]: The config file for Rhea. Default is no config." << std::endl;
     }
@@ -34,7 +34,7 @@ public:
     TestArgs(int argc, char **argv) {
         AddOpt("-c", common::args::ArgType::kInt, 1);
         AddOpt("-bs", common::args::ArgType::kSize, 4*(1ul<<10));
-        AddOpt("-rc", common::args::ArgType::kInt, 1);
+        AddOpt("-rc", common::args::ArgType::kInt, 0);
         AddOpt("-wc", common::args::ArgType::kInt, 1);
         AddOpt("-base", common::args::ArgType::kString, "/tmp");
         AddOpt("-conf", common::args::ArgType::kString, "");
