@@ -79,9 +79,9 @@ int main(int argc, char* argv[]){
         parcel.id_ = base;
         parcel.storage_index_ = 0;
         parcel.type_ = OperationType::PUBLISH;
-        parcel.position_ = sink_member*bs;
+        parcel.position_ = sink_member*bs + i*bs*clients_per_file;
         parcel.data_size_ = bs;
-        parcel.buffer_ = data;
+//        parcel.buffer_ = data;
         write_client.Publish(parcel, data);
     }
 

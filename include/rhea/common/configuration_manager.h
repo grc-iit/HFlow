@@ -57,7 +57,7 @@ namespace rhea {
         CharStruct BYTEFLOW_SIZE_MAP_NAME;
         uint64_t BYTEFLOW_STAT_PUSH_INTERVAL;
 
-        ConfigurationManager() : common::ConfigurationManager("/home/user/sentinel/conf/base_rhea.conf"),
+        ConfigurationManager() : //common::ConfigurationManager("/home/user/sentinel/conf/base_rhea.conf"),
                                  BYTEFLOW_SIZE_MAP_NAME("test_byteflow_size_map"),
                                  BYTEFLOW_STAT_PUSH_INTERVAL(100),
                                  RHEA_CLIENT_SERVICE_DIR("/dev/shm/rhea/rhea_client_service"),
