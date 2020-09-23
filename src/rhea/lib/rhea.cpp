@@ -40,7 +40,7 @@ bool rhea::Client::Subscribe(Parcel &parcel, char *data) {
     status = status && read_queue->Push(parcel, BASKET_CONF->MY_SERVER);
     std::pair<bool, std::string> result;
     do{
-        auto key = CharStruct(parcel.id_.data() + std::to_string(parcel.position_));
+        auto key = CharStruct(parcel.id_.data());
         AUTO_TRACER("rhea::Client::Subscribe", key);
         result = warehouse->Get(key);
         if(!result.first) usleep(100);
