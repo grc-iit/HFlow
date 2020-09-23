@@ -29,7 +29,7 @@ bool rhea::ByteFlowRegulatorServer::AlterNodes(uint16_t job_id, uint_fast64_t ou
 	//doOp
     int8_t multiplier = static_cast<int8_t>(out_rate > in_rate ? Alter_Type::SHRINK : Alter_Type::GROW);
 	auto difference = abs((int)(out_rate - in_rate)) - (variation/2);
-	uint16_t node_var = difference*multiplier/step;
+	int16_t node_var = difference*multiplier/step;
 	// TODO: add more alterations based
 	ResourceAllocation resources(job_id, node_var ,0, 0);
 	auto jobmanager_client = basket::Singleton<sentinel::job_manager::client>::GetInstance();
