@@ -32,10 +32,13 @@ protected:
                 continue;
             }
             for(auto parsel:parsels){
+                AUTO_TRACER("rhea_job::Source", event.position_);
                 std::string data = client->GetData(parsel);
                 Parcel destination = parsel;
                 destination.id_+="_temp";
+                destination.position_=0;
                 Parcel source = parsel;
+                source.position_=0;
                 source.buffer_=data.data();
                 basket::Singleton<FileIOClient>::GetInstance(0)->Write(source,destination); //TODO: FIX ME: getInstance should use redis
                 client->DeleteData(parsel);
@@ -91,6 +94,7 @@ protected:
     }
 
     size_t Run(Parcel &event) override {
+        AUTO_TRACER("rhea_job::KEYBY", event.position_);
         auto hash = std::hash<std::string>();
         return hash(std::string(event.id_.c_str()));
     }
@@ -109,13 +113,17 @@ protected:
     }
 
     void Run(Parcel &event) override {
+        AUTO_TRACER("rhea_job::sink", event.position_);
         Parcel destination = event;
         Parcel source = event;
         source.id_+="_temp";
+        source.position_=0;
+        destination.position_=0;
         auto redis_client = basket::Singleton<FileIOClient>::GetInstance(0); //TODO: FIX ME: getInstance should use redis
         redis_client->Read(source,destination);
         redis_client->Remove(source);
-        source=event;
+        source.id_=event.id_;
+        source.position_=event.position_;
         basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Write(destination,source);
     }
 
