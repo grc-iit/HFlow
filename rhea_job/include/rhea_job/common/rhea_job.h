@@ -25,6 +25,7 @@ protected:
 
     Parcel Run(Parcel &event) override {
         while(true){
+            RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
             auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
             auto parsels = client->GetWriteParsel(server_id);
             if(parsels.size() == 0) {
@@ -66,6 +67,7 @@ protected:
 
     Parcel Run(Parcel &event) override {
         while(true){
+            RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
             auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
             auto parsels = client->GetReadParsel(server_id);
             if(parsels.size() == 0) {
@@ -116,6 +118,7 @@ protected:
         AUTO_TRACER("rhea_job::sink", event.position_);
         Parcel destination = event;
         Parcel source = event;
+        RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
         source.id_+="_temp"+ std::to_string(event.position_);
         source.position_=0;
         destination.position_=0;
@@ -143,6 +146,7 @@ protected:
     void Run(Parcel &event) override {
         Parcel destination = event;
         Parcel source = event;
+        RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
         basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Read(source,destination);
         auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
         client->PutData(source,destination.buffer_);
