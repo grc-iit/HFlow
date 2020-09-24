@@ -13,10 +13,10 @@ private:
     void VerifyArgs(void) {
         int wc = GetIntOpt("-wc");
         int rc = GetIntOpt("-rc");
-        if(rc > wc) {
-            std::cout << "The number of reads must be less than the number of writes" << std::endl;
-            exit(EXIT_FAILURE);
-        }
+//        if(rc > wc) {
+//            std::cout << "The number of reads must be less than the number of writes" << std::endl;
+//            exit(EXIT_FAILURE);
+//        }
     }
 
 public:
@@ -34,7 +34,7 @@ public:
     TestArgs(int argc, char **argv) {
         AddOpt("-c", common::args::ArgType::kInt, 1);
         AddOpt("-bs", common::args::ArgType::kSize, 4*(1ul<<10));
-        AddOpt("-rc", common::args::ArgType::kInt, 0);
+        AddOpt("-rc", common::args::ArgType::kInt, 1);
         AddOpt("-wc", common::args::ArgType::kInt, 1);
         AddOpt("-base", common::args::ArgType::kString, "/tmp");
         AddOpt("-conf", common::args::ArgType::kString, "");
@@ -60,11 +60,12 @@ int main(int argc, char* argv[]){
     int sink_member = rank%clients_per_file;
     std::string base = args.GetStringOpt("-base") + "/test" + std::to_string(sink_group) + ".txt";
 
+    auto conf = args.GetStringOpt("-conf");
     //Set configuration files
     COMMON_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
     SENTINEL_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
     RHEA_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
-    COMMON_CONF->LoadConfiguration();
+    RHEA_CONF->LoadConfiguration();
 
     //Allocate block
     char *data = (char*)malloc(bs);
@@ -74,6 +75,9 @@ int main(int argc, char* argv[]){
 
     //Write to file
     rhea::Client write_client(0);
+    auto write_parcels = std::vector<Parcel>();
+    auto writer_timer = Timer();
+    writer_timer.resumeTime();
     for(int i = 0; i < wc; ++i) {
         Parcel parcel;
         parcel.id_ = base;
@@ -82,10 +86,21 @@ int main(int argc, char* argv[]){
         parcel.position_ = sink_member*bs*wc + i*bs;
         parcel.data_size_ = bs;
         write_client.Publish(parcel, data);
+        write_parcels.push_back(parcel);
     }
+    MPI_Barrier(MPI_COMM_WORLD);
+    writer_timer.pauseTime();
+    auto write_async_time = writer_timer.getElapsedTime();
+    writer_timer.resumeTime();
+    write_client.WaitAll(write_parcels);
+    MPI_Barrier(MPI_COMM_WORLD);
+    writer_timer.pauseTime();
 
     //Read from file
     rhea::Client read_client(1);
+    auto read_parcels = std::vector<Parcel>();
+    auto read_timer = Timer();
+    read_timer.resumeTime();
     for(int i = 0; i < rc; ++i) {
         Parcel parcel;
         parcel.id_ = base;
@@ -95,10 +110,20 @@ int main(int argc, char* argv[]){
         parcel.data_size_ = bs;
         memset(data, 0, bs);
         read_client.Subscribe(parcel, data);
-        if (strncmp(data, data_save, bs) != 0) {
-            exit(EXIT_FAILURE);
-        }
+        read_parcels.push_back(parcel);
     }
+    MPI_Barrier(MPI_COMM_WORLD);
+    read_timer.pauseTime();
+    auto read_async_time = read_timer.getElapsedTime();
+    read_timer.resumeTime();
+    read_client.WaitAll(read_parcels);
+    MPI_Barrier(MPI_COMM_WORLD);
+    read_timer.pauseTime();
+    if(BASKET_CONF->MPI_RANK == 0){
+        printf("Async Write Time %f, Sync Write time %f\n",write_async_time,writer_timer.getElapsedTime());
+        printf("Async Read Time %f, Sync Read time %f\n",read_async_time,read_timer.getElapsedTime());
+    }
+
 
     //Finalize
     read_client.FinalizeClient();

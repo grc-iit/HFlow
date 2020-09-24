@@ -9,7 +9,7 @@ std::shared_ptr<Job<Parcel>> create_job_0()  {
 }
 
 void free_job_0(RheaWriteJob *p) {
-    { delete p; }
+    { }
 }
 
 std::shared_ptr<Job<Parcel>> create_job_1() {

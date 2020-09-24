@@ -16,7 +16,7 @@ namespace bip=boost::interprocess;
 namespace rhea{
     class RheaClient {
     private:
-        basket::unordered_map<Parcel,bip::string> warehouse;
+        basket::unordered_map<Parcel,std::string> warehouse;
         basket::unordered_map<Parcel,ParcelState> parsel_state;
         basket::queue<Parcel> write_queue,read_queue;
         common::Daemon<RheaClient> * daemon;

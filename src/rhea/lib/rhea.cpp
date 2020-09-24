@@ -8,7 +8,7 @@
 
 rhea::Client::Client(uint32_t jid, bool is_application): job_id_(jid) {
     RHEA_CONF->ConfigureRheaClient();
-    warehouse = std::make_shared<basket::unordered_map<Parcel, bip::string>>();
+    warehouse = std::make_shared<basket::unordered_map<Parcel, std::string>>();
     write_queue = std::make_shared<basket::queue<Parcel>>("WRITE_QUEUE");
     read_queue = std::make_shared<basket::queue<Parcel>>("READ_QUEUE");
     parsel_state = std::make_shared<basket::unordered_map<Parcel,ParcelState>>("PARSEL_STATE");
@@ -27,7 +27,7 @@ void rhea::Client::FinalizeClient() {
 
 bool rhea::Client::Publish(Parcel &parcel, char* data) {
     AUTO_TRACER("rhea::Client::Publish", parcel.id_);
-    auto data_str =  bip::string(data);
+    auto data_str =  std::string(data,parcel.data_size_);
     auto status = true;
     status = status && warehouse->Put(parcel, data_str);
     status = status && write_queue->Push(parcel, BASKET_CONF->MY_SERVER);
@@ -77,7 +77,7 @@ std::vector<Parcel> rhea::Client::GetReadParsel(uint16_t server_id) {
 std::string rhea::Client::GetData(Parcel &parcel) {
     AUTO_TRACER("rhea::Client::GetData", parcel);
     auto result = warehouse->Get(parcel);
-    return result.second.c_str();
+    return std::string(result.second.c_str(),result.second.size());
 }
 
 bool rhea::Client::DeleteData(Parcel &parcel) {
@@ -88,7 +88,7 @@ bool rhea::Client::DeleteData(Parcel &parcel) {
 
 bool rhea::Client::PutData(Parcel &parcel, char *data) {
     AUTO_TRACER("rhea::Client::PutData", parcel);
-    auto data_str = bip::string(data, parcel.data_size_);
+    auto data_str = std::string(data,parcel.data_size_);
     return warehouse->Put(parcel,data_str);
 }
 
@@ -110,8 +110,11 @@ ParcelState rhea::Client::Wait(Parcel &parcel) {
         result = parsel_state->Get(parcel);
         is_completed = result.first && result.second.status_ == TaskStatus::DONE;
         if(!is_completed) usleep(100);
-        else
+        else{
+            parsel_state->Erase(parcel);
             return result.second;
+        }
+
     }while(!is_completed);
     return result.second;
 }

@@ -83,7 +83,7 @@ namespace rhea {
             LoadConfiguration();
             //port, list of servers, server dir,
             BASKET_CONF->RPC_THREADS = BYTEFLOW_REGULATOR_RPC_THREADS;
-            BASKET_CONF->MEMORY_ALLOCATED = 1024ULL * 1024ULL * 1ULL;
+            BASKET_CONF->MEMORY_ALLOCATED = 1024ULL * 1024ULL * 1024ULL;
             BASKET_CONF->BACKED_FILE_DIR = BYTEFLOW_REGULATOR_DIR;
             BASKET_CONF->ConfigureDefaultServer(BYTEFLOW_REGULATOR_HOST.c_str());
             BYTEFLOW_REGULATOR_COUNT = BASKET_CONF->NUM_SERVERS;
@@ -102,7 +102,7 @@ namespace rhea {
             LoadConfiguration();
             //port, list of servers, server dir,
             BASKET_CONF->RPC_THREADS = RHEA_CLIENT_SERVICE_RPC_THREADS;
-            BASKET_CONF->MEMORY_ALLOCATED = 1024ULL * 1024ULL * 1ULL;
+            BASKET_CONF->MEMORY_ALLOCATED = 1024ULL * 1024ULL * 1024ULL;
             BASKET_CONF->BACKED_FILE_DIR = RHEA_CLIENT_SERVICE_DIR;
             BASKET_CONF->ConfigureDefaultServer(RHEA_CLIENT_SERVICE_HOST.c_str());
             RHEA_CLIENT_SERVICE_COUNT = BASKET_CONF->NUM_SERVERS;

@@ -28,7 +28,7 @@ std::string random_string( size_t length )
 int main(int argc, char * argv[]){
     MPI_Init(&argc,&argv);
 
-    std::vector<uint32_t> request_number = {4};
+    std::vector<uint32_t> request_number = {1000};
     std::vector<uint32_t> request_size = {4};
 
     uint payload_size=0;
@@ -36,72 +36,38 @@ int main(int argc, char * argv[]){
     std::string payload = random_string(payload_size);
 
     std::cout << payload << std::endl;
-
-    uint32_t jobId = 0;
+    auto filename = RHEA_CONF->ReplaceEnvVariable("${HOME}/test_file.txt");
+    JobId jobId = 0;
     rhea::Client write_client(jobId);
-//    sleep(5);
-    Parcel write_parcel;
-    write_parcel.storage_index_=0;
-    write_parcel.type_=OperationType::PUBLISH;
+    auto parcels = std::vector<Parcel>();
+    auto timer = Timer();
+    timer.resumeTime();
     for(int size : request_size) {
-        write_parcel.data_size_=size;
         for (int number : request_number) {
             int offset=0;
-            write_parcel.id_= "/home/jaime/projects/rhea/test/test_results/test_" + std::to_string(size) + "_" + std::to_string(number);
             for(int i=0; i < number; i++){
+                Parcel write_parcel;
+                write_parcel.data_size_=size;
+                write_parcel.id_= filename;
+                write_parcel.storage_index_=0;
+                write_parcel.type_=OperationType::PUBLISH;
                 write_parcel.position_=offset;
                 auto current_payload = payload.substr(offset, size);
-//                write_parcel.buffer_=current_payload.data();
                 char* rhea_data = current_payload.data();
                 write_client.Publish(write_parcel, rhea_data);
+                parcels.push_back(write_parcel);
                 offset+=size;
-//                sleep(5);
             }
         }
     }
-
-//    for(int size : request_size) {
-//        write_parcel.data_size_=size;
-//        for (int number : request_number) {
-//            int offset=0;
-//            write_parcel.id_= "/home/jaime/projects/rhea/test/test_results/test_" + std::to_string(size) + "_" + std::to_string(number);
-//            for(int i=0; i < number; i++){
-//                write_parcel.position_=offset;
-//                auto rhea_data = write_client.GetData(write_parcel);
-//                offset+=size;
-//                std::cout << write_parcel.position_ << ": " << rhea_data << std::endl;
-//            }
-//        }
-//    }
-
-//    uint32_t read_jobId = 1;
-//    rhea::Client read_client(read_jobId);
-//
-//    std::string results;
-//    Parcel read_parcel;
-//    read_parcel.storage_index_=0;
-//    read_parcel.type_=OperationType::SUBSCRIBE;
-//    for(int size : request_size) {
-//        read_parcel.data_size_=size;
-//        for (int number : request_number) {
-//            int offset=0;
-//            read_parcel.id_= "/home/jaime/projects/rhea/test/test_results/test_" + std::to_string(size) + "_" + std::to_string(number);
-//            for(int i=0; i < number; i++){
-//                read_parcel.position_=offset;
-//                auto current_payload=payload.substr(offset, size);
-//                read_parcel.buffer_=new char[size];
-//                char return_data[size];
-//                write_client.Subscribe(read_parcel, return_data);
-//                results+=return_data;
-//                offset+=size;
-//            }
-//        }
-//    }
-//
-//    if(payload == results){
-//        exit(EXIT_FAILURE);
-//    }
-//    read_client.FinalizeClient();
+    MPI_Barrier(MPI_COMM_WORLD);
+    timer.pauseTime();
+    auto async_time = timer.getElapsedTime();
+    timer.resumeTime();
+    write_client.WaitAll(parcels);
+    MPI_Barrier(MPI_COMM_WORLD);
+    timer.pauseTime();
+    printf("Async Write Time %f, Sync Write time %f\n",async_time,timer.getElapsedTime());
     write_client.FinalizeClient();
     MPI_Finalize();
 }

@@ -154,7 +154,9 @@ protected:
         RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
         basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Read(source,destination);
         auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
+
         client->PutData(source,destination.buffer_);
+        free(destination.buffer_);
         rhea::Client write_client(job_id_,false);
         write_client.UpdateParcelStatus(event, TaskStatus::DONE);
     }
