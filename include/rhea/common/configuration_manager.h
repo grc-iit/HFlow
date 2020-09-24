@@ -64,10 +64,10 @@ namespace rhea {
                                  BYTEFLOW_REGULATOR_DIR("/dev/shm/rhea/rhea_byteflow_regulator"),
                                  BYTEFLOW_REGULATOR_SERVER_PORT(9000),
                                  BYTEFLOW_REGULATOR_RPC_THREADS(4),
-                                 BYTEFLOW_REGULATOR_HOST("${HOME}/projects/rhea/sentinel/conf/hostfile"),
+                                 BYTEFLOW_REGULATOR_HOST("${HOME}/projects/rhea/scripts/local/byteflow_regulator"),
                                  RHEA_CLIENT_SERVICE_PORT(12000),
                                  RHEA_CLIENT_SERVICE_RPC_THREADS(4),
-                                 RHEA_CLIENT_SERVICE_HOST("${HOME}/projects/rhea/sentinel/conf/hostfile") {
+                                 RHEA_CLIENT_SERVICE_HOST("${HOME}/projects/rhea/scripts/local/client_service") {
 
         }
 

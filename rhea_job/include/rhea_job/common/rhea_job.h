@@ -24,9 +24,9 @@ protected:
     }
 
     Parcel Run(Parcel &event) override {
+        RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
+        auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
         while(loop_cond_.wait_for(std::chrono::microseconds(100)) == std::future_status::timeout){
-            RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
-            auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
             auto parsels = client->GetWriteParsel(server_id);
             if(parsels.size() == 0) {
                 continue;
@@ -66,9 +66,9 @@ protected:
     }
 
     Parcel Run(Parcel &event) override {
+        RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
+        auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
         while(loop_cond_.wait_for(std::chrono::microseconds(100)) == std::future_status::timeout){
-            RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
-            auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
             auto parsels = client->GetReadParsel(server_id);
             if(parsels.size() == 0) {
                 usleep(100);

@@ -32,3 +32,8 @@ ${RHEA_BUILD_DIR}/test/unit/rhea_test_exec -conf ${RHEA_SOURCE_DIR}/sentinel/con
 ```
 
 To run tests in clion, make sure to add the -conf param to your target.
+
+
+vi /home/hdevarajan/spack_dir/v0.15.4.scs/var/spack/environments/rhea/.spack-env/view/etc/openmpi-mca-params.conf
+rmaps_base_oversubscribe = 1
+rmaps_base_inherit = 1
