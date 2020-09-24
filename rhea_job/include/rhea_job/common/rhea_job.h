@@ -32,8 +32,7 @@ protected:
                 continue;
             }
             for(auto parcel:parsels){
-                rhea::Client write_client(job_id_,false);
-                write_client.UpdateParcelStatus(parcel, TaskStatus::IN_PROGRESS);
+                client->UpdateParcelStatus(parcel, TaskStatus::IN_PROGRESS);
                 std::string data = client->GetData(parcel);
                 AUTO_TRACER("rhea_job::Source", data);
                 Parcel destination = parcel;
@@ -76,8 +75,7 @@ protected:
                 continue;
             }
             for(auto parcel:parsels){
-                rhea::Client write_client(job_id_,false);
-                write_client.UpdateParcelStatus(parcel, TaskStatus::IN_PROGRESS);
+                client->UpdateParcelStatus(parcel, TaskStatus::IN_PROGRESS);
                 emit(job_id_, id_, parcel);
             }
         }
@@ -125,12 +123,15 @@ protected:
         source.id_+="_temp"+ std::to_string(event.position_);
         source.position_=0;
         destination.position_=0;
+        auto data=std::string();
+        data.resize(event.data_size_);
+        destination.buffer_=data.data();
         auto redis_client = basket::Singleton<FileIOClient>::GetInstance(0); //TODO: FIX ME: getInstance should use redis
         redis_client->Read(source,destination);
         redis_client->Remove(source);
         source.id_=event.id_;
         source.position_=event.position_;
-        basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Write(destination,source);
+        basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_).Write(destination,source);
         rhea::Client write_client(job_id_,false);
         write_client.UpdateParcelStatus(event, TaskStatus::DONE);
     }
@@ -149,16 +150,17 @@ protected:
     }
 
     void Run(Parcel &event) override {
+
         Parcel destination = event;
+        auto data=std::string();
+        data.resize(event.data_size_);
+        destination.buffer_=data.data();
         Parcel source = event;
         RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
-        basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Read(source,destination);
+        IOFactory().GetIOClient(event.storage_index_).Read(source,destination);
         auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
-
-        client->PutData(source,destination.buffer_);
-        free(destination.buffer_);
-        rhea::Client write_client(job_id_,false);
-        write_client.UpdateParcelStatus(event, TaskStatus::DONE);
+        client->PutData(source,data);
+        client->UpdateParcelStatus(event, TaskStatus::DONE);
     }
 
     bool Finalize(Parcel &event) override {

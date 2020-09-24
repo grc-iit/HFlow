@@ -116,7 +116,6 @@ int main(int argc, char* argv[]){
     read_timer.pauseTime();
     auto read_async_time = read_timer.getElapsedTime();
     read_timer.resumeTime();
-    read_client.WaitAll(read_parcels);
     MPI_Barrier(MPI_COMM_WORLD);
     read_timer.pauseTime();
     if(BASKET_CONF->MPI_RANK == 0){

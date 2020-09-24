@@ -8,7 +8,7 @@
 
 rhea::Client::Client(uint32_t jid, bool is_application): job_id_(jid) {
     RHEA_CONF->ConfigureRheaClient();
-    warehouse = std::make_shared<basket::unordered_map<Parcel, std::string>>();
+    warehouse = std::make_shared<basket::unordered_map<Parcel, DataHolder>>("DATA_WAREHOUSE");
     write_queue = std::make_shared<basket::queue<Parcel>>("WRITE_QUEUE");
     read_queue = std::make_shared<basket::queue<Parcel>>("READ_QUEUE");
     parsel_state = std::make_shared<basket::unordered_map<Parcel,ParcelState>>("PARSEL_STATE");
@@ -40,13 +40,10 @@ bool rhea::Client::Subscribe(Parcel &parcel, char *data) {
     AUTO_TRACER("rhea::Client::Subscribe", parcel.id_);
     auto status = true;
     status = status && read_queue->Push(parcel, BASKET_CONF->MY_SERVER);
-    std::pair<bool, std::string> result;
-    do{
-        result = warehouse->Get(parcel);
-        if(!result.first) usleep(100);
-        else
-            memcpy(data, result.second.data(), result.second.size());
-    }while(!result.first);
+    Wait(parcel);
+    std::pair<bool, CharStruct> result = warehouse->Get(parcel);
+    memcpy(data, result.second.data(), result.second.size());
+    warehouse->Erase(parcel);
     return result.first;
 }
 
@@ -74,7 +71,7 @@ std::vector<Parcel> rhea::Client::GetReadParsel(uint16_t server_id) {
     return parcels;
 }
 
-std::string rhea::Client::GetData(Parcel &parcel) {
+DataHolder rhea::Client::GetData(Parcel &parcel) {
     AUTO_TRACER("rhea::Client::GetData", parcel);
     auto result = warehouse->Get(parcel);
     return std::string(result.second.c_str(),result.second.size());
@@ -86,10 +83,9 @@ bool rhea::Client::DeleteData(Parcel &parcel) {
     return result.first;
 }
 
-bool rhea::Client::PutData(Parcel &parcel, char *data) {
+bool rhea::Client::PutData(Parcel &parcel, DataHolder data) {
     AUTO_TRACER("rhea::Client::PutData", parcel);
-    auto data_str = std::string(data,parcel.data_size_);
-    return warehouse->Put(parcel,data_str);
+    return warehouse->Put(parcel,data);
 }
 
 bool rhea::Client::UpdateParcelStatus(Parcel &parcel, TaskStatus status) {

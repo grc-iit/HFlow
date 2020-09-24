@@ -13,13 +13,15 @@
 #include <basket/unordered_map/unordered_map.h>
 #include <rhea/byte_flow_regulator/byte_flow_regulator_client.h>
 #include <rhea/common/configuration_manager.h>
+#include <rhea/common/typedefs.h>
+
 namespace bip=boost::interprocess;
 
 namespace rhea {
 
     class Client {
     private:
-        std::shared_ptr<basket::unordered_map<Parcel, std::string>> warehouse;
+        std::shared_ptr<basket::unordered_map<Parcel, DataHolder>> warehouse;
         std::shared_ptr<basket::queue<Parcel>> write_queue, read_queue;
         std::shared_ptr<basket::unordered_map<Parcel,ParcelState>> parsel_state;
         uint32_t job_id_;
@@ -37,8 +39,8 @@ namespace rhea {
 
         std::vector<Parcel> GetReadParsel(uint16_t server_id);
 
-        std::string GetData(Parcel &parcel);
-        bool PutData(Parcel &parcel,char* data);
+        DataHolder GetData(Parcel &parcel);
+        bool PutData(Parcel &parcel,DataHolder data);
         bool DeleteData(Parcel &parcel);
         bool UpdateParcelStatus(Parcel &parcel, TaskStatus status);
         std::vector<ParcelState> WaitAll(std::vector<Parcel> &parcels);
