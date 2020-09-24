@@ -19,7 +19,7 @@ namespace rhea {
 
     class Client {
     private:
-        std::shared_ptr<basket::unordered_map<CharStruct, bip::string>> warehouse;
+        std::shared_ptr<basket::unordered_map<Parcel, bip::string>> warehouse;
         std::shared_ptr<basket::queue<Parcel>> write_queue, read_queue;
         std::shared_ptr<basket::unordered_map<Parcel,ParcelState>> parsel_state;
         uint32_t job_id_;

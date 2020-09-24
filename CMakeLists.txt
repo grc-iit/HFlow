@@ -27,7 +27,7 @@ set(LIBS -lpthread -lbasket -lrpc  -lboost_system -lboost_filesystem -lmpi -ldl 
 set(RHEA_COMMON include/rhea/common/configuration_manager.h
                 include/rhea/common/data_structures.h
                 include/rhea/common/enumerations.h
-                include/rhea/common/error_codes.h)
+                include/rhea/common/error_codes.h src/rhea/common/data_structures.cpp)
 
 set(RHEA_LIB ${RHEA_COMMON} src/rhea/lib/rhea.cpp include/rhea/rhea.h)
 add_library(rhea SHARED ${RHEA_LIB})
