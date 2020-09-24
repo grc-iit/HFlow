@@ -13,15 +13,14 @@ add_executable(client_multi multi_write/test.cpp)
 add_dependencies(client_multi rhea sentinel)
 target_link_libraries(client_multi ${LIBS} rhea sentinel)
 
-set(test_files  rhea_client_test
-        writeIO)
+set(test_files  rhea_client_test writeIO)
 foreach (test_file ${test_files})
 add_executable(${test_file} ${test_file}/test.cpp)
 add_dependencies(${test_file} ${test_file} scs_io_common sentinel)
 target_link_libraries(${test_file} ${LIBS} rhea scs_io_common sentinel)
 endforeach ()
 
-add_executable(byte_flow_regulator_test_exec integration/byte_flow_regulator/test.cpp)
+add_executable(byte_flow_regulator_test_exec byte_flow_regulator/test.cpp)
 add_dependencies(byte_flow_regulator_test_exec rhea_client scs_io_common sentinel)
 target_link_libraries(byte_flow_regulator_test_exec ${LIBS} rhea_client scs_io_common sentinel)
 

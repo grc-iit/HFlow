@@ -33,6 +33,8 @@ protected:
                 continue;
             }
             for(auto parcel:parsels){
+                rhea::Client write_client(job_id_,false);
+                write_client.UpdateParcelStatus(parcel, TaskStatus::IN_PROGRESS);
                 std::string data = client->GetData(parcel);
                 AUTO_TRACER("rhea_job::Source", data);
                 Parcel destination = parcel;
@@ -74,8 +76,10 @@ protected:
                 usleep(100);
                 continue;
             }
-            for(auto parsel:parsels){
-                emit(job_id_, id_, parsel);
+            for(auto parcel:parsels){
+                rhea::Client write_client(job_id_,false);
+                write_client.UpdateParcelStatus(parcel, TaskStatus::IN_PROGRESS);
+                emit(job_id_, id_, parcel);
             }
         }
         return event;
@@ -128,6 +132,8 @@ protected:
         source.id_=event.id_;
         source.position_=event.position_;
         basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Write(destination,source);
+        rhea::Client write_client(job_id_,false);
+        write_client.UpdateParcelStatus(event, TaskStatus::DONE);
     }
 
     bool Finalize(Parcel &event) override {
@@ -150,6 +156,8 @@ protected:
         basket::Singleton<IOFactory>::GetInstance()->GetIOClient(event.storage_index_)->Read(source,destination);
         auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
         client->PutData(source,destination.buffer_);
+        rhea::Client write_client(job_id_,false);
+        write_client.UpdateParcelStatus(event, TaskStatus::DONE);
     }
 
     bool Finalize(Parcel &event) override {

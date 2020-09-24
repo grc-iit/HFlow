@@ -21,6 +21,7 @@ namespace rhea {
     private:
         std::shared_ptr<basket::unordered_map<CharStruct, bip::string>> warehouse;
         std::shared_ptr<basket::queue<Parcel>> write_queue, read_queue;
+        std::shared_ptr<basket::unordered_map<Parcel,ParcelState>> parsel_state;
         uint32_t job_id_;
         bool is_application_;
     public:
@@ -39,6 +40,9 @@ namespace rhea {
         std::string GetData(Parcel &parcel);
         bool PutData(Parcel &parcel,char* data);
         bool DeleteData(Parcel &parcel);
+        bool UpdateParcelStatus(Parcel &parcel, TaskStatus status);
+        std::vector<ParcelState> WaitAll(std::vector<Parcel> &parcels);
+        ParcelState Wait(Parcel &parcel);
 
     };
 }

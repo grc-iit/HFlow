@@ -67,7 +67,9 @@ namespace rhea {
                                  BYTEFLOW_REGULATOR_HOST("${HOME}/projects/rhea/sentinel/conf/hostfile"),
                                  RHEA_CLIENT_SERVICE_PORT(12000),
                                  RHEA_CLIENT_SERVICE_RPC_THREADS(4),
-                                 RHEA_CLIENT_SERVICE_HOST("${HOME}/projects/rhea/sentinel/conf/hostfile") {}
+                                 RHEA_CLIENT_SERVICE_HOST("${HOME}/projects/rhea/sentinel/conf/hostfile") {
+
+        }
 
         void ConfigureByteflowRegulatorClient() {
             LoadConfiguration();
