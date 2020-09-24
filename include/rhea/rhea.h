@@ -34,6 +34,8 @@ namespace rhea {
         bool Publish(Parcel &parcel, char* data);
 
         bool Subscribe(Parcel &parcel, char* data);
+        bool AsyncSubscribe(Parcel &parcel);
+        bool GetSubscribedData(Parcel &parcel, char* data);
 
         std::vector<Parcel> GetWriteParsel(uint16_t server_id);
 

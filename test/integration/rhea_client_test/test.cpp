@@ -95,7 +95,9 @@ int main(int argc, char* argv[]){
     write_client.WaitAll(write_parcels);
     MPI_Barrier(MPI_COMM_WORLD);
     writer_timer.pauseTime();
-
+    if(BASKET_CONF->MPI_RANK == 0){
+        printf("Async Write Time %f, Sync Write time %f\n",write_async_time,writer_timer.getElapsedTime());
+    }
     //Read from file
     rhea::Client read_client(1);
     auto read_parcels = std::vector<Parcel>();
@@ -108,18 +110,19 @@ int main(int argc, char* argv[]){
         parcel.type_ = OperationType::SUBSCRIBE;
         parcel.position_ = sink_member*bs*wc + i*bs;
         parcel.data_size_ = bs;
-        memset(data, 0, bs);
-        read_client.Subscribe(parcel, data);
+        read_client.AsyncSubscribe(parcel);
         read_parcels.push_back(parcel);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     read_timer.pauseTime();
     auto read_async_time = read_timer.getElapsedTime();
     read_timer.resumeTime();
+    read_client.WaitAll(read_parcels);
+    memset(data, 0, bs);
+    for(auto& parcel:read_parcels) read_client.GetSubscribedData(parcel,data);
     MPI_Barrier(MPI_COMM_WORLD);
     read_timer.pauseTime();
     if(BASKET_CONF->MPI_RANK == 0){
-        printf("Async Write Time %f, Sync Write time %f\n",write_async_time,writer_timer.getElapsedTime());
         printf("Async Read Time %f, Sync Read time %f\n",read_async_time,read_timer.getElapsedTime());
     }
 

@@ -47,6 +47,21 @@ bool rhea::Client::Subscribe(Parcel &parcel, char *data) {
     return result.first;
 }
 
+bool rhea::Client::AsyncSubscribe(Parcel &parcel) {
+    auto status = true;
+    status = status && read_queue->Push(parcel, BASKET_CONF->MY_SERVER);
+    return status;
+}
+
+bool rhea::Client::GetSubscribedData(Parcel &parcel, char *data) {
+    std::pair<bool, CharStruct> result = warehouse->Get(parcel);
+    if(result.first){
+        memcpy(data, result.second.data(), result.second.size());
+        warehouse->Erase(parcel);
+    }
+    return result.first;
+}
+
 std::vector<Parcel> rhea::Client::GetWriteParsel(uint16_t server_id) {
     float size = write_queue->Size(server_id);
     auto amount = size * .1 == 0? size : size * .1;
@@ -114,3 +129,7 @@ ParcelState rhea::Client::Wait(Parcel &parcel) {
     }while(!is_completed);
     return result.second;
 }
+
+
+
+
