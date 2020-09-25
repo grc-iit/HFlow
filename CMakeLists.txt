@@ -31,10 +31,10 @@ set(LIBS -lpthread -lbasket -lrpc  -lboost_system -lboost_filesystem -lmpi -ldl 
 
 
 
-set(RHEA_COMMON include/rhea/common/configuration_manager.h
-                include/rhea/common/data_structures.h
-                include/rhea/common/enumerations.h
-                include/rhea/common/error_codes.h src/rhea/common/data_structures.cpp include/rhea/common/typedefs.h)
+set(RHEA_COMMON ${CMAKE_SOURCE_DIR}/include/rhea/common/configuration_manager.h
+        ${CMAKE_SOURCE_DIR}/include/rhea/common/data_structures.h
+        ${CMAKE_SOURCE_DIR}/include/rhea/common/enumerations.h
+        ${CMAKE_SOURCE_DIR}/include/rhea/common/error_codes.h ${CMAKE_SOURCE_DIR}/src/rhea/common/data_structures.cpp ${CMAKE_SOURCE_DIR}/include/rhea/common/typedefs.h)
 
 set(RHEA_LIB ${RHEA_COMMON} src/rhea/lib/rhea.cpp include/rhea/rhea.h)
 add_library(rhea SHARED ${RHEA_LIB})
@@ -44,8 +44,8 @@ add_executable(rhea_client_service ${RHEA_CLIENT_SERVICE})
 target_link_libraries(rhea_client_service ${LIBS})
 
 
-set(RHEA_BYTEFLOW_REGULATOR ${RHEA_COMMON} src/rhea/byte_flow_regulator/server.cpp include/rhea/byte_flow_regulator/server.h src/rhea/byte_flow_regulator/main.cpp)
-add_executable(rhea_byteflow_regulator ${RHEA_BYTEFLOW_REGULATOR})
+set(RHEA_BYTEFLOW_REGULATOR ${RHEA_COMMON} ${CMAKE_SOURCE_DIR}/src/rhea/byte_flow_regulator/server.cpp ${CMAKE_SOURCE_DIR}/include/rhea/byte_flow_regulator/server.h)
+add_executable(rhea_byteflow_regulator ${RHEA_BYTEFLOW_REGULATOR}  ${CMAKE_SOURCE_DIR}/src/rhea/byte_flow_regulator/main.cpp)
 add_dependencies(rhea_byteflow_regulator sentinel)
 target_link_libraries(rhea_byteflow_regulator ${LIBS} -L${CMAKE_BINARY_DIR}/sentinel -lsentinel)
 

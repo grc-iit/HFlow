@@ -25,4 +25,10 @@ add_dependencies(byte_flow_regulator_test rhea_client scs_io_common sentinel)
 target_link_libraries(byte_flow_regulator_test ${LIBS} rhea_client scs_io_common sentinel)
 
 
+
+add_executable(byte_flow_regulator_test_decision byte_flow_regulator/test_decision.cpp ${RHEA_BYTEFLOW_REGULATOR})
+add_dependencies(byte_flow_regulator_test_decision rhea_client scs_io_common sentinel)
+target_link_libraries(byte_flow_regulator_test_decision ${LIBS} rhea_client scs_io_common sentinel)
+
+
 add_test(NAME rhea_client_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/rhea_client_test_exec)

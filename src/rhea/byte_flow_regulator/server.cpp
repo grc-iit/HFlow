@@ -69,26 +69,31 @@ bool rhea::byteflow_regulator::Server::AlterNodes(uint16_t job_id, uint_fast32_t
 
 void rhea::byteflow_regulator::Server::RunInternal(std::future<void> futureObj) {
     while (futureObj.wait_for(std::chrono::microseconds(RHEA_CONF->BYTEFLOW_UPDATE_INTERVAL)) == std::future_status::timeout) {
-        auto in_jobs = std::vector<JobId>();
+        CalculateRate();
+    }
+}
+
+bool rhea::byteflow_regulator::Server::CalculateRate() {
+    auto in_jobs = std::vector<JobId>();
+    std::shared_lock in_lock(in_mutex);
+    in_jobs.reserve(in_rate_map.size());
+    for(const auto& kv : in_rate_map) {
+        in_jobs.push_back(kv.first);
+    }
+    in_lock.unlock();
+    for(const auto& job:in_jobs){
         std::shared_lock in_lock(in_mutex);
-        in_jobs.reserve(in_rate_map.size());
-        for(const auto& kv : in_rate_map) {
-            in_jobs.push_back(kv.first);
-        }
+        std::shared_lock out_lock(in_mutex);
+        auto in_rate = in_rate_map[job];
+        auto out_rate = out_rate_map[job];
+        out_lock.unlock();
         in_lock.unlock();
-        for(const auto& job:in_jobs){
-            std::shared_lock in_lock(in_mutex);
-            std::shared_lock out_lock(in_mutex);
-            auto in_rate = in_rate_map[job];
-            auto out_rate = out_rate_map[job];
-            out_lock.unlock();
-            in_lock.unlock();
-            if(in_rate == 0 || out_rate == 0) continue;
-            if (abs((int) (out_rate - in_rate)) >= RHEA_CONF->BYTEFLOW_UPDATE_VARIATION) {
-                auto ret = AlterNodes(job, out_rate, in_rate);
-            }
+        if(in_rate == 0 || out_rate == 0) continue;
+        if (abs((int) (out_rate - in_rate)) >= RHEA_CONF->BYTEFLOW_UPDATE_VARIATION) {
+            auto ret = AlterNodes(job, out_rate, in_rate);
         }
     }
+    return true;
 }
 
 

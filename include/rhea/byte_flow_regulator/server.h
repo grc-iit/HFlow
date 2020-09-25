@@ -38,6 +38,7 @@ namespace rhea::byteflow_regulator{
         bool SetInRate(JobId job_id, uint32_t in_rate);
         bool SetOutRate(JobId job_id, uint32_t out_rate);
         bool RegisterJob(JobId job_id);
+        bool CalculateRate();
         bool FinalizeJob(JobId job_id);
         Server(){
             RHEA_CONF->ConfigureByteflowRegulatorServer();
