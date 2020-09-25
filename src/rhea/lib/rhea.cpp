@@ -23,6 +23,7 @@ void rhea::Client::FinalizeClient() {
     MPI_Barrier(MPI_COMM_WORLD);
     if(BASKET_CONF->MPI_RANK == 0)
         basket::Singleton<sentinel::job_manager::client>::GetInstance()->TerminateJob(job_id_);
+    sleep(1);
     MPI_Barrier(MPI_COMM_WORLD);
 }
 
