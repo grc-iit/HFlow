@@ -111,7 +111,6 @@ int main(int argc, char* argv[]){
         printf("\nAsync Write Time %f, Sync Write time %f\n",write_async_time,writer_timer.getElapsedTime());
     }
 
-    write_client.FinalizeClient();
     //Read from file
     rhea::Client read_client(1);
     auto read_parcels = std::vector<Parcel>();
@@ -143,6 +142,7 @@ int main(int argc, char* argv[]){
 
 
     //Finalize
+    write_client.FinalizeClient();
     read_client.FinalizeClient();
     MPI_Finalize();
 }
