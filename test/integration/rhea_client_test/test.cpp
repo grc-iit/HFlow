@@ -135,7 +135,7 @@ int main(int argc, char* argv[]){
     auto read_async_time = read_timer.getElapsedTime();
     read_timer.resumeTime();
     memset(data, 0, bs);
-    for(int i=0;i<wc;++i){
+    for(int i=0;i<rc;++i){
         printProgress((double (i+1))/wc,"read");
         read_client.Wait(read_parcels[i]);
         read_client.GetSubscribedData(read_parcels[i],data);
