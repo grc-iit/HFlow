@@ -108,7 +108,7 @@ int main(int argc, char* argv[]){
     MPI_Barrier(MPI_COMM_WORLD);
     writer_timer.pauseTime();
     if(BASKET_CONF->MPI_RANK == 0){
-        printf("Async Write Time %f, Sync Write time %f\n",write_async_time,writer_timer.getElapsedTime());
+        printf("\nAsync Write Time %f, Sync Write time %f\n",write_async_time,writer_timer.getElapsedTime());
     }
     //Read from file
     rhea::Client read_client(1);
@@ -136,7 +136,7 @@ int main(int argc, char* argv[]){
     MPI_Barrier(MPI_COMM_WORLD);
     read_timer.pauseTime();
     if(BASKET_CONF->MPI_RANK == 0){
-        printf("Async Read Time %f, Sync Read time %f\n",read_async_time,read_timer.getElapsedTime());
+        printf("\nAsync Read Time %f, Sync Read time %f\n",read_async_time,read_timer.getElapsedTime());
     }
 
 
