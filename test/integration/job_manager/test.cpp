@@ -76,11 +76,11 @@ int main(int argc, char* argv[]){
         spawn_time.resumeTime();
         server.SpawnWorkerManagers(threads, jobId);
         spawn_time.pauseTime();
-        usleep(20000);
+        sleep(1);
         kill_time.resumeTime();
         server.TerminateJob(jobId);
         kill_time.pauseTime();
-        usleep(20000);
+        sleep(1);
         printProgress((double (j+1))/count,"job_test");
     }
     MPI_Barrier(MPI_COMM_WORLD);
