@@ -32,17 +32,19 @@ protected:
                 continue;
             }
             for(auto parcel:parsels){
-                client->UpdateParcelStatus(parcel, TaskStatus::IN_PROGRESS);
-                std::string data = client->GetData(parcel);
-                AUTO_TRACER("rhea_job::Source", data);
-                Parcel destination = parcel;
-                destination.id_+="_temp"+ std::to_string(parcel.position_);
-                destination.position_=0;
-                Parcel source = parcel;
-                source.position_=0;
-                source.buffer_=data.data();
-                basket::Singleton<FileIOClient>::GetInstance(0)->Write(source,destination); //TODO: FIX ME: getInstance should use redis
-                client->DeleteData(parcel);
+                {
+                    AUTO_TRACER("RheaWriteQueueSourceTask::Run",parcel);
+                    client->UpdateParcelStatus(parcel, TaskStatus::IN_PROGRESS);
+                    std::string data = client->GetData(parcel);
+                    Parcel destination = parcel;
+                    destination.id_+="_temp"+ std::to_string(parcel.position_);
+                    destination.position_=0;
+                    Parcel source = parcel;
+                    source.position_=0;
+                    source.buffer_=data.data();
+                    basket::Singleton<FileIOClient>::GetInstance(0)->Write(source,destination); //TODO: FIX ME: getInstance should use redis
+                    client->DeleteData(parcel);
+                }
                 emit(job_id_, id_, parcel);
             }
         }
@@ -75,6 +77,7 @@ protected:
                 continue;
             }
             for(auto parcel:parsels){
+                AUTO_TRACER("RheaReadQueueSourceTask::Run",parcel);
                 client->UpdateParcelStatus(parcel, TaskStatus::IN_PROGRESS);
                 emit(job_id_, id_, parcel);
             }
@@ -97,7 +100,7 @@ protected:
     }
 
     size_t Run(Parcel &event) override {
-        AUTO_TRACER("rhea_job::KEYBY", event.position_);
+        AUTO_TRACER("RheaKeyByTask::Run", event);
         auto hash = std::hash<std::string>();
         return hash(std::string(event.id_.c_str()));
     }
@@ -116,7 +119,7 @@ protected:
     }
 
     void Run(Parcel &event) override {
-        AUTO_TRACER("rhea_job::sink", event.position_);
+        AUTO_TRACER("RheaWriteSinkTask::Run", event);
         Parcel destination = event;
         Parcel source = event;
         RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
@@ -150,7 +153,7 @@ protected:
     }
 
     void Run(Parcel &event) override {
-
+        AUTO_TRACER("RheaReadSinkTask::Run", event);
         Parcel destination = event;
         auto data=std::string();
         data.resize(event.data_size_);
@@ -181,6 +184,7 @@ struct RheaWriteJob : public Job<Parcel> {
     }
 
     void CreateDAG() override {
+        AUTO_TRACER("RheaWriteJob::CreateDAG");
         source_ = std::make_shared<RheaWriteQueueSourceTask>();
         source_->job_id_=job_id_;
         source_->id_=0;
@@ -208,6 +212,7 @@ struct RheaReadJob : public Job<Parcel> {
     }
 
     void CreateDAG() override {
+        AUTO_TRACER("RheaReadJob::CreateDAG");
         source_ = std::make_shared<RheaReadQueueSourceTask>();
         source_->job_id_=job_id_;
         source_->id_=0;

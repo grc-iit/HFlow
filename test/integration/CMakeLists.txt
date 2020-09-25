@@ -20,9 +20,9 @@ add_dependencies(${test_file} ${test_file} scs_io_common sentinel)
 target_link_libraries(${test_file} ${LIBS} rhea scs_io_common sentinel)
 endforeach ()
 
-add_executable(byte_flow_regulator_test_exec byte_flow_regulator/test.cpp)
-add_dependencies(byte_flow_regulator_test_exec rhea_client scs_io_common sentinel)
-target_link_libraries(byte_flow_regulator_test_exec ${LIBS} rhea_client scs_io_common sentinel)
+add_executable(byte_flow_regulator_test byte_flow_regulator/test.cpp)
+add_dependencies(byte_flow_regulator_test rhea_client scs_io_common sentinel)
+target_link_libraries(byte_flow_regulator_test ${LIBS} rhea_client scs_io_common sentinel)
 
 
 add_test(NAME rhea_client_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/rhea_client_test_exec)

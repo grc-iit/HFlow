@@ -3,7 +3,7 @@
 //
 
 #include <mpi.h>
-#include <rhea/byte_flow_regulator/byte_flow_regulator_client.h>
+#include <rhea/byte_flow_regulator/client.h>
 #include <basket/common/singleton.h>
 #include <sentinel/worker_manager/client.h>
 #include <common/arguments.h>
@@ -60,13 +60,31 @@ int main(int argc, char* argv[]){
     RHEA_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
     COMMON_CONF->LoadConfiguration();
 
-    rhea::ByteFlowRegulatorClient byteFlowRegulatorClient;
+    rhea::byteflow_regulator::Client client;
+    JobId job=0;
+    if(BASKET_CONF->MPI_RANK == 0)
+        client.RegisterJob(job);
+    MPI_Barrier(MPI_COMM_WORLD);
+    auto in_rate_timer = Timer();
+    in_rate_timer.resumeTime();
     for(int j = 0; j < in_r; ++j){
-        byteFlowRegulatorClient.SetInRate(0, 0, bs);
-        byteFlowRegulatorClient.SetOutRate(0, 0, bs);
+        client.SetInRate(job, bs);
     }
-
-    byteFlowRegulatorClient.Finalize();
-
+    MPI_Barrier(MPI_COMM_WORLD);
+    in_rate_timer.pauseTime();
+    if(BASKET_CONF->MPI_RANK == 0)
+        printf("In rate time %f\n",in_rate_timer.getElapsedTime());
+    auto out_rate_timer = Timer();
+    out_rate_timer.resumeTime();
+    for(int j = 0; j < out_r; ++j){
+        client.SetOutRate( job, bs);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    out_rate_timer.pauseTime();
+    if(BASKET_CONF->MPI_RANK == 0)
+        printf("Out rate time %f\n",out_rate_timer.getElapsedTime());
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(BASKET_CONF->MPI_RANK == 0)
+        client.Finalize(job);
     MPI_Finalize();
 }

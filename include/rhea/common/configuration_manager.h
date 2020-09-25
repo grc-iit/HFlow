@@ -5,6 +5,7 @@
 #ifndef RHEA_CONFIGURATION_MANAGER_H
 #define RHEA_CONFIGURATION_MANAGER_H
 
+#include <sentinel/common/error_codes.h>
 #include <basket/common/singleton.h>
 #include <basket/common/typedefs.h>
 #include <sentinel/common/enumerations.h>
@@ -17,7 +18,6 @@
 #include <rapidjson/reader.h>
 #include <regex>
 #include <boost/filesystem/operations.hpp>
-#include <sentinel/common/error_codes.h>
 #include <common/configuration_manager.h>
 
 #define RHEA_CONF basket::Singleton<rhea::ConfigurationManager>::GetInstance()
@@ -37,6 +37,9 @@ namespace rhea {
             config(doc, "RHEA_CLIENT_SERVICE_PORT", RHEA_CLIENT_SERVICE_PORT);
             config(doc, "RHEA_CLIENT_SERVICE_RPC_THREADS", RHEA_CLIENT_SERVICE_RPC_THREADS);
             config(doc, "RHEA_CLIENT_SERVICE_HOST", RHEA_CLIENT_SERVICE_HOST);
+            config(doc, "BYTEFLOW_UPDATE_INTERVAL", BYTEFLOW_UPDATE_INTERVAL);
+            config(doc, "BYTEFLOW_UPDATE_VARIATION", BYTEFLOW_UPDATE_VARIATION);
+            config(doc, "BYTEFLOW_UPDATE_STEP", BYTEFLOW_UPDATE_STEP);
             boost::filesystem::create_directories(RHEA_CLIENT_SERVICE_DIR.c_str());
             boost::filesystem::create_directories(BYTEFLOW_REGULATOR_DIR.c_str());
         }
@@ -56,6 +59,9 @@ namespace rhea {
 
         CharStruct BYTEFLOW_SIZE_MAP_NAME;
         uint64_t BYTEFLOW_STAT_PUSH_INTERVAL;
+        uint64_t BYTEFLOW_UPDATE_INTERVAL;
+        uint16_t BYTEFLOW_UPDATE_VARIATION;
+        uint64_t BYTEFLOW_UPDATE_STEP;
 
         ConfigurationManager() : //common::ConfigurationManager("/home/user/sentinel/conf/base_rhea.conf"),
                                  BYTEFLOW_SIZE_MAP_NAME("test_byteflow_size_map"),
@@ -67,7 +73,10 @@ namespace rhea {
                                  BYTEFLOW_REGULATOR_HOST("${HOME}/projects/rhea/scripts/local/byteflow_regulator"),
                                  RHEA_CLIENT_SERVICE_PORT(12000),
                                  RHEA_CLIENT_SERVICE_RPC_THREADS(4),
-                                 RHEA_CLIENT_SERVICE_HOST("${HOME}/projects/rhea/scripts/local/client_service") {
+                                 RHEA_CLIENT_SERVICE_HOST("${HOME}/projects/rhea/scripts/local/client_service"),
+                                 BYTEFLOW_UPDATE_INTERVAL(100),
+                                 BYTEFLOW_UPDATE_VARIATION(100),
+                                 BYTEFLOW_UPDATE_STEP(5){
 
         }
 

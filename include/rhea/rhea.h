@@ -11,7 +11,7 @@
 #include <basket/common/singleton.h>
 #include <basket/queue/queue.h>
 #include <basket/unordered_map/unordered_map.h>
-#include <rhea/byte_flow_regulator/byte_flow_regulator_client.h>
+#include <rhea/byte_flow_regulator/client.h>
 #include <rhea/common/configuration_manager.h>
 #include <rhea/common/typedefs.h>
 

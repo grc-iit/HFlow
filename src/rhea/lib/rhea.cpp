@@ -48,12 +48,14 @@ bool rhea::Client::Subscribe(Parcel &parcel, char *data) {
 }
 
 bool rhea::Client::AsyncSubscribe(Parcel &parcel) {
+    AUTO_TRACER("rhea::Client::AsyncSubscribe", parcel.id_);
     auto status = true;
     status = status && read_queue->Push(parcel, BASKET_CONF->MY_SERVER);
     return status;
 }
 
 bool rhea::Client::GetSubscribedData(Parcel &parcel, char *data) {
+    AUTO_TRACER("rhea::Client::AsyncSubscribe", parcel.id_);
     std::pair<bool, CharStruct> result = warehouse->Get(parcel);
     if(result.first){
         memcpy(data, result.second.data(), result.second.size());
@@ -104,17 +106,20 @@ bool rhea::Client::PutData(Parcel &parcel, DataHolder data) {
 }
 
 bool rhea::Client::UpdateParcelStatus(Parcel &parcel, TaskStatus status) {
+    AUTO_TRACER("rhea::Client::UpdateParcelStatus", parcel,status);
     auto parsel_state_val = ParcelState(status);
     return parsel_state->Put(parcel, parsel_state_val);
 }
 
 std::vector<ParcelState> rhea::Client::WaitAll(vector<Parcel> &parcels) {
+    AUTO_TRACER("rhea::Client::WaitAll", parcels);
     auto parcel_states = std::vector<ParcelState>();
     for(auto& parcel:parcels) parcel_states.push_back(Wait(parcel));
     return parcel_states;
 }
 
 ParcelState rhea::Client::Wait(Parcel &parcel) {
+    AUTO_TRACER("rhea::Client::Wait", parcel);
     bool is_completed=false;
     std::pair<bool, ParcelState> result;
     do{
@@ -125,7 +130,6 @@ ParcelState rhea::Client::Wait(Parcel &parcel) {
             parsel_state->Erase(parcel);
             return result.second;
         }
-
     }while(!is_completed);
     return result.second;
 }
