@@ -90,7 +90,6 @@ int main(int argc, char* argv[]){
     auto writer_timer = Timer();
     writer_timer.resumeTime();
     for(int i = 0; i < wc; ++i) {
-        printProgress((double (i+1))/wc,"publish");
         Parcel parcel;
         parcel.id_ = base;
         parcel.storage_index_ = 0;
@@ -104,7 +103,11 @@ int main(int argc, char* argv[]){
     writer_timer.pauseTime();
     auto write_async_time = writer_timer.getElapsedTime();
     writer_timer.resumeTime();
-    write_client.WaitAll(write_parcels);
+    for(int i=0;i<wc;++i){
+        printProgress((double (i+1))/wc,"write");
+        write_client.Wait(write_parcels[i]);
+    }
+
     MPI_Barrier(MPI_COMM_WORLD);
     writer_timer.pauseTime();
     if(BASKET_CONF->MPI_RANK == 0){
@@ -118,7 +121,6 @@ int main(int argc, char* argv[]){
     auto read_timer = Timer();
     read_timer.resumeTime();
     for(int i = 0; i < rc; ++i) {
-        printProgress((double (i+1))/rc,"subscribe");
         Parcel parcel;
         parcel.id_ = base;
         parcel.storage_index_ = 0;
@@ -132,9 +134,12 @@ int main(int argc, char* argv[]){
     read_timer.pauseTime();
     auto read_async_time = read_timer.getElapsedTime();
     read_timer.resumeTime();
-    read_client.WaitAll(read_parcels);
     memset(data, 0, bs);
-    for(auto& parcel:read_parcels) read_client.GetSubscribedData(parcel,data);
+    for(int i=0;i<wc;++i){
+        printProgress((double (i+1))/wc,"read");
+        read_client.Wait(read_parcels[i]);
+        read_client.GetSubscribedData(read_parcels[i],data);
+    }
     MPI_Barrier(MPI_COMM_WORLD);
     read_timer.pauseTime();
     if(BASKET_CONF->MPI_RANK == 0){
