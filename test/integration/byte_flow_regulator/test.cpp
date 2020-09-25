@@ -58,7 +58,7 @@ int main(int argc, char* argv[]){
     //Set configuration files
     COMMON_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
     RHEA_CONF->CONFIGURATION_FILE = args.GetStringOpt("-conf");
-    COMMON_CONF->LoadConfiguration();
+    RHEA_CONF->LoadConfiguration();
 
     rhea::byteflow_regulator::Client client;
     JobId job=0;
