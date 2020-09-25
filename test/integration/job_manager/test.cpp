@@ -81,10 +81,10 @@ int main(int argc, char* argv[]){
         server.TerminateJob(jobId);
         kill_time.pauseTime();
         usleep(20000);
-        printProgress((double (j))/count,"job_test");
+        printProgress((double (j+1))/count,"job_test");
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(BASKET_CONF->MPI_RANK == 0)
-        printf("Spawn Time %f, Kill Time %f\n",spawn_time.getElapsedTime(),kill_time.getElapsedTime());
+        printf("\nSpawn Time %f, Kill Time %f\n",spawn_time.getElapsedTime(),kill_time.getElapsedTime());
     MPI_Finalize();
 }
