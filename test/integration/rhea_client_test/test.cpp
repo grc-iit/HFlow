@@ -43,6 +43,17 @@ public:
     }
 };
 
+#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+#define PBWIDTH 60
+
+void printProgress(double percentage,char* data="") {
+    int val = (int) (percentage * 100);
+    int lpad = (int) (percentage * PBWIDTH);
+    int rpad = PBWIDTH - lpad;
+    printf("\r%s %3d%% [%.*s%*s]",data, val, lpad, PBSTR, rpad, "");
+    fflush(stdout);
+}
+
 int main(int argc, char* argv[]){
     MPI_Init(&argc,&argv);
     int rank;
@@ -79,6 +90,7 @@ int main(int argc, char* argv[]){
     auto writer_timer = Timer();
     writer_timer.resumeTime();
     for(int i = 0; i < wc; ++i) {
+        printProgress((double (i+1))/wc,"publish");
         Parcel parcel;
         parcel.id_ = base;
         parcel.storage_index_ = 0;
@@ -104,6 +116,7 @@ int main(int argc, char* argv[]){
     auto read_timer = Timer();
     read_timer.resumeTime();
     for(int i = 0; i < rc; ++i) {
+        printProgress((double (i+1))/rc,"subscribe");
         Parcel parcel;
         parcel.id_ = base;
         parcel.storage_index_ = 0;
