@@ -110,7 +110,8 @@ int main(int argc, char* argv[]){
     if(BASKET_CONF->MPI_RANK == 0){
         printf("\nAsync Write Time %f, Sync Write time %f\n",write_async_time,writer_timer.getElapsedTime());
     }
-
+    write_client.FinalizeClient();
+    sleep(5);
     //Read from file
     rhea::Client read_client(1);
     auto read_parcels = std::vector<Parcel>();
@@ -142,7 +143,6 @@ int main(int argc, char* argv[]){
 
 
     //Finalize
-    write_client.FinalizeClient();
     read_client.FinalizeClient();
     MPI_Finalize();
 }
