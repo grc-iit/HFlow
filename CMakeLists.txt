@@ -50,7 +50,7 @@ add_dependencies(rhea_byteflow_regulator sentinel)
 target_link_libraries(rhea_byteflow_regulator ${LIBS} -L${CMAKE_BINARY_DIR}/sentinel -lsentinel)
 
 
-set(RHEA_CLIENT ${RHEA_COMMON} src/rhea/byte_flow_regulator/client.cpp include/rhea/byte_flow_regulator/client.h src/rhea/client_service/rhea_client.cpp include/rhea/client_service/rhea_client.h src/rhea/client_service/main.cpp)
+set(RHEA_CLIENT ${RHEA_COMMON} ${CMAKE_SOURCE_DIR}/src/rhea/byte_flow_regulator/client.cpp ${CMAKE_SOURCE_DIR}/include/rhea/byte_flow_regulator/client.h ${CMAKE_SOURCE_DIR}/src/rhea/client_service/rhea_client.cpp ${CMAKE_SOURCE_DIR}/include/rhea/client_service/rhea_client.h ${CMAKE_SOURCE_DIR}/src/rhea/client_service/main.cpp)
 add_library(rhea_client ${RHEA_CLIENT})
 add_dependencies(rhea_client sentinel)
 target_link_libraries(rhea_client ${LIBS} -L${CMAKE_BINARY_DIR}/sentinel -lsentinel)

@@ -31,4 +31,10 @@ add_dependencies(byte_flow_regulator_test_decision rhea_client scs_io_common sen
 target_link_libraries(byte_flow_regulator_test_decision ${LIBS} rhea_client scs_io_common sentinel)
 
 
+add_executable(job_manager_test job_manager/test.cpp ${CMAKE_SOURCE_DIR}/sentinel/src/sentinel/job_manager/server.cpp ${CMAKE_SOURCE_DIR}/sentinel/include/sentinel/job_manager/Server.h)
+add_dependencies(job_manager_test rhea_client scs_io_common sentinel)
+target_link_libraries(job_manager_test ${LIBS} sentinel)
+
+
+
 add_test(NAME rhea_client_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/rhea_client_test_exec)
