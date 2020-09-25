@@ -1,0 +1,8 @@
+HOSTNAME=$1
+NUM_PROCS=$2
+EXECUTABLE=$3
+CONF=$4
+PORT=$5
+WORKER_ID=$6
+echo ssh ${HOSTNAME} -f "nohup ${EXECUTABLE} ${CONF} ${PORT} ${WORKER_ID} &"
+ssh ${HOSTNAME} -f "nohup ${EXECUTABLE} ${CONF} ${PORT} ${WORKER_ID} &"
