@@ -96,10 +96,17 @@ int main(int argc, char *argv[]) {
         RHEA_CONF->CONFIGURATION_FILE = conf;
     }
     RHEA_CONF->LoadConfiguration();
+    uint32_t app1_queues,app2_queues,app3_queues;
+    if(mode == 0){
+        app1_queues = (RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT/3.0);
+        app2_queues = (RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT/3.0);
+        app3_queues = RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT - app1_queues - app2_queues;
+    }else{
+        app1_queues = (RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT*1.0/2.0);
+        app2_queues = ceil((RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT*1.0/2.0)*1.0/2.0);
+        app3_queues = RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT - app1_queues - app2_queues;
+    }
 
-    uint32_t app1_queues = (RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT*2.0/3.0);
-    uint32_t app2_queues = floor((RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT*1.0/3.0)*2.0/3.0);
-    uint32_t app3_queues = RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT - app1_queues - app2_queues;
     uint32_t start_app1_queue = 0, end_app1_queue=app1_queues-1;
     uint32_t start_app2_queue = app1_queues, end_app2_queue=start_app2_queue + app2_queues - 1;
     uint32_t start_app3_queue = end_app2_queue + 1, end_app3_queue=start_app3_queue + app3_queues - 1;
@@ -119,9 +126,9 @@ int main(int argc, char *argv[]) {
         rhea::Client write_client(job_id,true, rank);
         if(mode == 0){
             job_id = 2;
+            BASKET_CONF->MY_SERVER = rank % app1_queues + start_app1_queue;
         }else{
             job_id = 0;
-            BASKET_CONF->MY_SERVER = rank % app1_queues + start_app1_queue;
         }
         COMMON_DBGVAR3(d4,rank,SENTINEL_CONF->COLLECTORS_PER_SOURCE,BASKET_CONF->MY_SERVER);
         int count = 32;
@@ -148,7 +155,7 @@ int main(int argc, char *argv[]) {
         MPI_Barrier(app1_comm);
         timer.pauseTime();
         if (app1_rank == 0) {
-            printf("\nApp1, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, async_time, timer.getElapsedTime());
+            printf("\nApp1, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, async_time-compute_us*count/1000.0, timer.getElapsedTime()-compute_us*count/1000.0);
         }
         MPI_Barrier(MPI_COMM_WORLD);
         write_client.FinalizeClient();
@@ -161,9 +168,9 @@ int main(int argc, char *argv[]) {
         rhea::Client write_client(job_id,true, rank);
         if(mode == 0){
             job_id = 2;
+            BASKET_CONF->MY_SERVER = rank % app1_queues + start_app1_queue;
         }else{
             job_id = 0;
-            BASKET_CONF->MY_SERVER = rank % app2_queues + start_app2_queue;
         }
         COMMON_DBGVAR3(d4,rank,SENTINEL_CONF->COLLECTORS_PER_SOURCE,BASKET_CONF->MY_SERVER);
         int count = 16;
@@ -190,7 +197,7 @@ int main(int argc, char *argv[]) {
         MPI_Barrier(app2_comm);
         timer.pauseTime();
         if (app2_rank == 0) {
-            printf("\nApp2, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, async_time, timer.getElapsedTime());
+            printf("\nApp2, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, async_time-compute_us*count/1000.0, timer.getElapsedTime()-compute_us*count/1000.0);
         }
         MPI_Barrier(MPI_COMM_WORLD);
         write_client.FinalizeClient();
@@ -204,9 +211,9 @@ int main(int argc, char *argv[]) {
         rhea::Client write_client(job_id,true, rank);
         if(mode == 0){
             job_id = 2;
+            BASKET_CONF->MY_SERVER = rank % app1_queues + start_app1_queue;
         }else{
             job_id = 0;
-            BASKET_CONF->MY_SERVER = rank % app3_queues + start_app3_queue;
         }
         COMMON_DBGVAR3(d4,rank,SENTINEL_CONF->COLLECTORS_PER_SOURCE,BASKET_CONF->MY_SERVER);
 
@@ -234,7 +241,7 @@ int main(int argc, char *argv[]) {
         MPI_Barrier(app3_comm);
         timer.pauseTime();
         if (app3_rank == 0) {
-            printf("\nApp3, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, async_time, timer.getElapsedTime());
+            printf("\nApp3, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, async_time-compute_us*count/1000.0, timer.getElapsedTime()-compute_us*count/1000.0);
         }
         MPI_Barrier(MPI_COMM_WORLD);
         write_client.FinalizeClient();
