@@ -6,15 +6,15 @@
 
 
 
-rhea::Client::Client(uint32_t jid, bool is_application): job_id_(jid) {
+rhea::Client::Client(uint32_t jid, bool is_application, int rank): job_id_(jid),i(0) {
     RHEA_CONF->ConfigureRheaClient();
     warehouse = std::make_shared<basket::unordered_map<Parcel, DataHolder>>("DATA_WAREHOUSE");
     write_queue = std::make_shared<basket::queue<Parcel>>("WRITE_QUEUE");
     read_queue = std::make_shared<basket::queue<Parcel>>("READ_QUEUE");
     parsel_state = std::make_shared<basket::unordered_map<Parcel,ParcelState>>("PARSEL_STATE");
     if(is_application){
-        if(BASKET_CONF->MPI_RANK == 0)
-            basket::Singleton<sentinel::job_manager::client>::GetInstance()->SubmitJob(jid, RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT);
+        if(rank == 0)
+            basket::Singleton<sentinel::job_manager::client>::GetInstance()->SubmitJob(jid, RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT,SENTINEL_CONF->COLLECTORS_PER_SOURCE);
     }
     MPI_Barrier(MPI_COMM_WORLD);
 }
@@ -32,7 +32,8 @@ bool rhea::Client::Publish(Parcel &parcel, char* data) {
     auto data_str =  std::string(data,parcel.data_size_);
     auto status = true;
     status = status && warehouse->Put(parcel, data_str);
-    status = status && write_queue->Push(parcel, BASKET_CONF->MY_SERVER);
+    auto my_server = BASKET_CONF->MY_SERVER;
+    status = status && write_queue->Push(parcel, my_server);
     auto parsel_state_val = ParcelState(TaskStatus::QUEUED);
     status = status && parsel_state->Put(parcel, parsel_state_val);
     return status;
@@ -107,10 +108,11 @@ bool rhea::Client::PutData(Parcel &parcel, DataHolder data) {
     return warehouse->Put(parcel,data);
 }
 
-bool rhea::Client::UpdateParcelStatus(Parcel &parcel, TaskStatus status) {
+double rhea::Client::UpdateParcelStatus(Parcel &parcel, TaskStatus status) {
     AUTO_TRACER("rhea::Client::UpdateParcelStatus", parcel,status);
     auto parsel_state_val = ParcelState(status);
-    return parsel_state->Put(parcel, parsel_state_val);
+    parsel_state->Put(parcel, parsel_state_val);
+    return parsel_state_val.timestamp_;
 }
 
 std::vector<ParcelState> rhea::Client::WaitAll(vector<Parcel> &parcels) {
