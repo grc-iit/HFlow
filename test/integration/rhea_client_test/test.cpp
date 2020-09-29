@@ -56,10 +56,11 @@ void printProgress(double percentage, char *data = "") {
 
 int main(int argc, char *argv[]) {
     MPI_Init(&argc, &argv);
-    int rank;
+    int rank,comm_size;
 
     //Get the number of clients
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &comm_size);
 
     //Get arguments
     TestArgs args(argc, argv);
@@ -113,7 +114,7 @@ int main(int argc, char *argv[]) {
         MPI_Barrier(MPI_COMM_WORLD);
         writer_timer.pauseTime();
         if (BASKET_CONF->MPI_RANK == 0) {
-            printf("\nAsync Write Time %f, Sync Write time %f\n", write_async_time, writer_timer.getElapsedTime());
+            printf("\nWrite Rate %f, Async Write Time %f, Sync Write time %f\n", (wc*comm_size*1000.0), write_async_time, writer_timer.getElapsedTime());
         }
         write_client.FinalizeClient();
         sleep(5);

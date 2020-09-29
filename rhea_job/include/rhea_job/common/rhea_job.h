@@ -34,7 +34,6 @@ protected:
             for(auto parcel:parsels){
                 {
                     AUTO_TRACER("RheaWriteQueueSourceTask::Run",parcel);
-                    client->UpdateParcelStatus(parcel, TaskStatus::IN_PROGRESS);
                     std::string data = client->GetData(parcel);
                     Parcel destination = parcel;
                     destination.id_+="_temp"+ std::to_string(parcel.position_);
@@ -44,6 +43,7 @@ protected:
                     source.buffer_=data.data();
                     basket::Singleton<FileIOClient>::GetInstance(0)->Write(source,destination); //TODO: FIX ME: getInstance should use redis
                     client->DeleteData(parcel);
+                    auto finish_time = client->UpdateParcelStatus(parcel, TaskStatus::IN_PROGRESS);
                 }
                 emit(job_id_, id_, parcel);
             }
@@ -55,6 +55,9 @@ protected:
         return true;
     }
 } RheaWriteQueueSourceTask;
+
+
+
 
 typedef struct RheaReadQueueSourceTask : public SourceTask<Parcel> {
 
@@ -89,6 +92,49 @@ protected:
         return true;
     }
 } RheaReadQueueSourceTask;
+
+typedef struct IOFWriteQueueSourceTask : public SourceTask<Parcel> {
+
+    uint16_t server_id;
+    IOFWriteQueueSourceTask() : SourceTask(), server_id(0) {}
+
+protected:
+    bool Initialize(Parcel &event) override {
+        server_id = atoi(event.id_.data());
+        return true;
+    }
+
+    Parcel Run(Parcel &event) override {
+        RHEA_CONF->CONFIGURATION_FILE = SENTINEL_CONF->CONFIGURATION_FILE;
+        while(loop_cond_.wait_for(std::chrono::microseconds(100)) == std::future_status::timeout){
+            auto client = basket::Singleton<rhea::Client>::GetInstance(job_id_,false);
+            auto parsels = client->GetWriteParsel(server_id);
+            if(parsels.size() == 0) {
+                usleep(10000);
+                continue;
+            }
+            for(auto parcel:parsels){
+                {
+                    AUTO_TRACER("RheaWriteQueueSourceTask::Run",parcel);
+                    std::string data = client->GetData(parcel);
+                    Parcel destination = parcel;
+                    Parcel source = parcel;
+                    source.position_=0;
+                    source.buffer_=data.data();
+                    basket::Singleton<IOFactory>::GetInstance()->GetIOClient(parcel.storage_index_).Write(source,destination);
+                    client->DeleteData(parcel);
+                    auto finish_time = client->UpdateParcelStatus(parcel, TaskStatus::DONE);
+                }
+                emit(job_id_, id_, parcel);
+            }
+        }
+        return event;
+    }
+
+    bool Finalize(Parcel &event) override {
+        return true;
+    }
+} IOFWriteQueueSourceTask;
 
 
 typedef struct RheaKeyByTask : public KeyByTask<Parcel> {
@@ -199,6 +245,26 @@ struct RheaWriteJob : public Job<Parcel> {
     }
 };
 
+struct IOFWriteJob : public Job<Parcel> {
+    IOFWriteJob(uint32_t job_id): Job<Parcel>(job_id){
+        CreateDAG();
+    }
+    IOFWriteJob(const IOFWriteJob &other) : Job<Parcel>(other){}
+    IOFWriteJob(IOFWriteJob &other) : Job<Parcel>(other) {}
+    /*Define Assignment Operator*/
+    IOFWriteJob &operator=(const IOFWriteJob &other) {
+        Job<Parcel>::operator=(other);
+        return *this;
+    }
+
+    void CreateDAG() override {
+        AUTO_TRACER("RheaWriteJob::CreateDAG");
+        source_ = std::make_shared<IOFWriteQueueSourceTask>();
+        source_->job_id_=job_id_;
+        source_->id_=0;
+    }
+};
+
 struct RheaReadJob : public Job<Parcel> {
     RheaReadJob(uint32_t job_id): Job<Parcel>(job_id){
         CreateDAG();
@@ -227,7 +293,13 @@ extern "C" {
     std::shared_ptr<Job<Parcel>> create_job_0();
     void free_job_0(RheaWriteJob *p);
     std::shared_ptr<Job<Parcel>> create_job_1();
-    void free_job_1(RheaWriteJob *p);
+    void free_job_1(RheaReadJob *p);
+    std::shared_ptr<Job<Parcel>> create_job_2();
+    void free_job_2(IOFWriteJob *p);
+    std::shared_ptr<Job<Parcel>> create_job_3();
+    void free_job_3(IOFWriteJob *p);
+    std::shared_ptr<Job<Parcel>> create_job_4();
+    void free_job_4(IOFWriteJob *p);
 }
 
 namespace clmdep_msgpack {

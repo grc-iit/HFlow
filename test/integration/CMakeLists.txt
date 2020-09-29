@@ -35,6 +35,12 @@ add_executable(job_manager_test job_manager/test.cpp ${CMAKE_SOURCE_DIR}/sentine
 add_dependencies(job_manager_test rhea_client scs_io_common sentinel)
 target_link_libraries(job_manager_test ${LIBS} sentinel)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMON_DEBUG_MSG")
+
+add_executable(real_app_dynamic_1 real_apps/test1.cpp)
+add_dependencies(real_app_dynamic_1 scs_io_common sentinel)
+target_link_libraries(real_app_dynamic_1 ${LIBS} rhea scs_io_common sentinel)
+
 
 
 add_test(NAME rhea_client_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/rhea_client_test_exec)

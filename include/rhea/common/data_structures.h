@@ -41,7 +41,7 @@ typedef struct ParcelState{
     double timestamp_;
     /*Define the default, copy and move constructor*/
     ParcelState() : status_(TaskStatus::NONE), timestamp_(0.0){}
-    explicit ParcelState(TaskStatus status):status_(status),timestamp_(std::chrono::milliseconds(std::time(NULL)).count()){}
+    explicit ParcelState(TaskStatus status):status_(status),timestamp_(std::chrono::nanoseconds(std::time(NULL)).count()){}
     ParcelState(const ParcelState &other) = default;
 
     ParcelState(ParcelState &&other) noexcept : status_(other.status_), timestamp_(other.timestamp_){}

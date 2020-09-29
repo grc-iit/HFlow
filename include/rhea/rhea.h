@@ -26,8 +26,9 @@ namespace rhea {
         std::shared_ptr<basket::unordered_map<Parcel,ParcelState>> parsel_state;
         uint32_t job_id_;
         bool is_application_;
+        int i;
     public:
-        Client(uint32_t job_id_, bool is_application_=true);
+        Client(uint32_t job_id_, bool is_application_=true,int rank = BASKET_CONF->MPI_RANK);
 
         void FinalizeClient();
 
@@ -44,7 +45,7 @@ namespace rhea {
         DataHolder GetData(Parcel &parcel);
         bool PutData(Parcel &parcel,DataHolder data);
         bool DeleteData(Parcel &parcel);
-        bool UpdateParcelStatus(Parcel &parcel, TaskStatus status);
+        double UpdateParcelStatus(Parcel &parcel, TaskStatus status);
         std::vector<ParcelState> WaitAll(std::vector<Parcel> &parcels);
         ParcelState Wait(Parcel &parcel);
 
