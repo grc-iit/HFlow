@@ -42,6 +42,7 @@ namespace rhea {
             config(doc, "BYTEFLOW_UPDATE_STEP", BYTEFLOW_UPDATE_STEP);
             boost::filesystem::create_directories(RHEA_CLIENT_SERVICE_DIR.c_str());
             boost::filesystem::create_directories(BYTEFLOW_REGULATOR_DIR.c_str());
+            RHEA_CLIENT_SERVICE_COUNT=GetServers(RHEA_CLIENT_SERVICE_HOST).size();
         }
 
     public:

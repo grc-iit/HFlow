@@ -22,9 +22,7 @@ public:
         std::cout << "-m [int]: mode to decide which job to run. [0-> IOF 1->Rhea]" << std::endl;
         std::cout << "-r [int]: ranks per node" << std::endl;
         std::cout << "-base [string]: The directory that will be used to store temp data. Default /tmp." << std::endl;
-        std::cout << "-conf1 [string]: The config file for App1. Default is no config." << std::endl;
-        std::cout << "-conf2 [string]: The config file for App2. Default is no config." << std::endl;
-        std::cout << "-conf3 [string]: The config file for App3. Default is no config." << std::endl;
+        std::cout << "-conf [string]: The config file for App1. Default is no config." << std::endl;
     }
 
     TestArgs(int argc, char **argv) {
@@ -32,9 +30,7 @@ public:
         AddOpt("-r", common::args::ArgType::kInt, 1);
         AddOpt("-bs", common::args::ArgType::kSize, 4 * (1ul << 10));
         AddOpt("-base", common::args::ArgType::kString, "/tmp");
-        AddOpt("-conf1", common::args::ArgType::kString, "");
-        AddOpt("-conf2", common::args::ArgType::kString, "");
-        AddOpt("-conf3", common::args::ArgType::kString, "");
+        AddOpt("-conf", common::args::ArgType::kString, "");
         ArgIter(argc, argv);
         VerifyArgs();
     }
@@ -73,9 +69,7 @@ int main(int argc, char *argv[]) {
     auto is_app2 = rank >= num_procs_per_app && rank < 2*num_procs_per_app;
     auto is_app3 = rank >= 2*num_procs_per_app;
 
-    COMMON_DBGVAR3(rank,is_app1,is_app2);
-    COMMON_DBGVAR2(rank,is_app3);
-    COMMON_DBGVAR2(rank,num_nodes);
+    COMMON_DBGVAR5(d1,rank,is_app1,is_app2,is_app3,num_nodes);
     MPI_Comm app1_comm,app2_comm,app3_comm;
     MPI_Comm_split(MPI_COMM_WORLD, !is_app1, rank, &app1_comm);
     MPI_Comm_split(MPI_COMM_WORLD, !is_app2, rank, &app2_comm);
@@ -94,31 +88,42 @@ int main(int argc, char *argv[]) {
     memset(data, 'a', bs);
     char *data_save = (char *) malloc(bs);
     memset(data_save, 'a', bs);
+    auto conf = args.GetStringOpt("-conf");
+    //Set configuration files
+    if(conf != ""){
+        COMMON_CONF->CONFIGURATION_FILE = conf;
+        SENTINEL_CONF->CONFIGURATION_FILE = conf;
+        RHEA_CONF->CONFIGURATION_FILE = conf;
+    }
+    RHEA_CONF->LoadConfiguration();
+
+    uint32_t app1_queues = (RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT*2.0/3.0);
+    uint32_t app2_queues = floor((RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT*1.0/3.0)*2.0/3.0);
+    uint32_t app3_queues = RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT - app1_queues - app2_queues;
+    uint32_t start_app1_queue = 0, end_app1_queue=app1_queues-1;
+    uint32_t start_app2_queue = app1_queues, end_app2_queue=start_app2_queue + app2_queues - 1;
+    uint32_t start_app3_queue = end_app2_queue + 1, end_app3_queue=start_app3_queue + app3_queues - 1;
+    if(rank == 0){
+        COMMON_DBGVAR3(a1,app1_queues,start_app1_queue,end_app1_queue);
+        COMMON_DBGVAR3(a2,app2_queues,start_app2_queue,end_app2_queue);
+        COMMON_DBGVAR3(a3,app3_queues,start_app3_queue,end_app3_queue);
+    }
+
+
     if(is_app1){
         // App 1: simulation + I/O (I/O intensive) like VPIC
-        auto conf = args.GetStringOpt("-conf1");
-        //Set configuration files
-        if(conf != ""){
-            COMMON_CONF->CONFIGURATION_FILE = conf;
-            SENTINEL_CONF->CONFIGURATION_FILE = conf;
-            RHEA_CONF->CONFIGURATION_FILE = conf;
-        }
-        RHEA_CONF->LoadConfiguration();
         JobId job_id;
-        int job_rank;
         if(mode == 0){
             job_id = 2;
-            SENTINEL_CONF->COLLECTORS_PER_SOURCE=1;
-            job_rank=app1_rank;
+        }else job_id = 0;
+        rhea::Client write_client(job_id,true, rank);
+        if(mode == 0){
+            job_id = 2;
         }else{
             job_id = 0;
-            int num_queues = (num_nodes*2.0/3.0);
-            SENTINEL_CONF->COLLECTORS_PER_SOURCE=4;
-            BASKET_CONF->MY_SERVER = rank % num_queues;
-            job_rank=rank;
+            BASKET_CONF->MY_SERVER = rank % app1_queues + start_app1_queue;
         }
-        COMMON_DBGVAR3(rank,SENTINEL_CONF->COLLECTORS_PER_SOURCE,job_rank);
-        rhea::Client write_client(job_id, true,rank);
+        COMMON_DBGVAR3(d4,rank,SENTINEL_CONF->COLLECTORS_PER_SOURCE,BASKET_CONF->MY_SERVER);
         int count = 32;
         auto parcels = std::vector<Parcel>();
         auto timer = Timer();
@@ -143,40 +148,29 @@ int main(int argc, char *argv[]) {
         MPI_Barrier(app1_comm);
         timer.pauseTime();
         if (app1_rank == 0) {
-            printf("\n App1, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, async_time-compute_us*count/1000.0, timer.getElapsedTime()-compute_us*count/1000.0);
+            printf("\nApp1, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, async_time, timer.getElapsedTime());
         }
         MPI_Barrier(MPI_COMM_WORLD);
         write_client.FinalizeClient();
     }else if(is_app2){
         // App 2: simulation + Checkpoint (balanced) like HACC with periodic checkpointing not too frequent
-        auto conf = args.GetStringOpt("-conf2");
-        //Set configuration files
-        if(conf != ""){
-            COMMON_CONF->CONFIGURATION_FILE = conf;
-            SENTINEL_CONF->CONFIGURATION_FILE = conf;
-            RHEA_CONF->CONFIGURATION_FILE = conf;
-        }
-        RHEA_CONF->LoadConfiguration();
         JobId job_id;
-        int job_rank;
         if(mode == 0){
             job_id = 2;
-            SENTINEL_CONF->COLLECTORS_PER_SOURCE=1;
-            job_rank=app2_rank;
+        }else job_id = 0;
+        rhea::Client write_client(job_id,true, rank);
+        if(mode == 0){
+            job_id = 2;
         }else{
             job_id = 0;
-            int num_queues = (num_nodes*1.0/3.0)*2.0/3.0;
-            SENTINEL_CONF->COLLECTORS_PER_SOURCE=4;
-            BASKET_CONF->MY_SERVER = rank % num_queues;
-            job_rank=rank;
+            BASKET_CONF->MY_SERVER = rank % app2_queues + start_app2_queue;
         }
-        COMMON_DBGVAR3(rank,SENTINEL_CONF->COLLECTORS_PER_SOURCE,job_rank);
-        rhea::Client write_client(job_id,false,rank);
+        COMMON_DBGVAR3(d4,rank,SENTINEL_CONF->COLLECTORS_PER_SOURCE,BASKET_CONF->MY_SERVER);
         int count = 16;
         auto parcels = std::vector<Parcel>();
         auto timer = Timer();
         timer.resumeTime();
-        int compute_us = 100*2;
+        int compute_us = 1000;
         for(int request_id=0;request_id < count;++request_id){
             usleep(compute_us);
             Parcel parcel;
@@ -196,40 +190,31 @@ int main(int argc, char *argv[]) {
         MPI_Barrier(app2_comm);
         timer.pauseTime();
         if (app2_rank == 0) {
-            printf("\n App2, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, async_time-compute_us*count/1000.0, timer.getElapsedTime()-compute_us*count/1000.0);
+            printf("\nApp2, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, async_time, timer.getElapsedTime());
         }
         MPI_Barrier(MPI_COMM_WORLD);
         write_client.FinalizeClient();
     }else{
         // App 3: Clustering Algorithm + write cluster (compute more) like Kmeans with in-memory data and writing only cluster points.
-        auto conf = args.GetStringOpt("-conf3");
-        //Set configuration files
-        if(conf != ""){
-            COMMON_CONF->CONFIGURATION_FILE = conf;
-            SENTINEL_CONF->CONFIGURATION_FILE = conf;
-            RHEA_CONF->CONFIGURATION_FILE = conf;
-        }
-        RHEA_CONF->LoadConfiguration();
         JobId job_id;
-        int job_rank;
+        int num_queues = RHEA_CONF->RHEA_CLIENT_SERVICE_COUNT;
         if(mode == 0){
             job_id = 2;
-            SENTINEL_CONF->COLLECTORS_PER_SOURCE=1;
-            job_rank=app3_rank;
+        }else job_id = 0;
+        rhea::Client write_client(job_id,true, rank);
+        if(mode == 0){
+            job_id = 2;
         }else{
             job_id = 0;
-            int num_queues = (num_nodes*1.0/3.0)*1.0/3.0;
-            SENTINEL_CONF->COLLECTORS_PER_SOURCE=4;
-            BASKET_CONF->MY_SERVER = rank % num_queues;
-            job_rank=rank;
+            BASKET_CONF->MY_SERVER = rank % app3_queues + start_app3_queue;
         }
-        COMMON_DBGVAR3(rank,SENTINEL_CONF->COLLECTORS_PER_SOURCE,job_rank);
-        rhea::Client write_client(job_id,true, rank);
+        COMMON_DBGVAR3(d4,rank,SENTINEL_CONF->COLLECTORS_PER_SOURCE,BASKET_CONF->MY_SERVER);
+
         int count = 8;
         auto parcels = std::vector<Parcel>();
         auto timer = Timer();
         timer.resumeTime();
-        int compute_us = 100*4;
+        int compute_us = 10000;
         for(int request_id=0;request_id < count;++request_id){
             usleep(compute_us);
             Parcel parcel;
@@ -249,7 +234,7 @@ int main(int argc, char *argv[]) {
         MPI_Barrier(app3_comm);
         timer.pauseTime();
         if (app3_rank == 0) {
-            printf("\n App3, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, async_time-compute_us*count/1000.0, timer.getElapsedTime()-compute_us*count/1000.0);
+            printf("\nApp3, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, async_time, timer.getElapsedTime());
         }
         MPI_Barrier(MPI_COMM_WORLD);
         write_client.FinalizeClient();
