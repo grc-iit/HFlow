@@ -105,11 +105,11 @@ int main(int argc, char *argv[]) {
     MPI_Barrier(MPI_COMM_WORLD);
     p1_timer.pauseTime();
     if (rank == 0) {
-        printf("\nP1, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, p1_async_time-compute_us*count/1000.0, p1_timer.getElapsedTime()-compute_us*count/1000.0);
+        printf("\nP1, Async Write Time %f, Sync Write time %f\n", p1_async_time, p1_timer.getElapsedTime());
     }
     MPI_Barrier(MPI_COMM_WORLD);
     //P2
-    compute_us = 1000;
+    compute_us = 2000;
     auto p2_timer = Timer();
     p2_timer.resumeTime();
     for(int request_id=0;request_id < count;++request_id){
@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
     p2_timer.pauseTime();
     auto p2_async_time = p2_timer.getElapsedTime();
     if (rank == 0) {
-        printf("\nP2, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, p2_async_time-compute_us*count/1000.0, p2_timer.getElapsedTime()-compute_us*count/1000.0);
+        printf("\nP2, Compute %f\n", p2_async_time);
     }
     //P3
     count = 4;
@@ -144,7 +144,7 @@ int main(int argc, char *argv[]) {
     MPI_Barrier(MPI_COMM_WORLD);
     p3_timer.pauseTime();
     if (rank == 0) {
-        printf("\nP3, Compute %f, Async Write Time %f, Sync Write time %f\n", compute_us*count/1000.0, p3_async_time-compute_us*count/1000.0, p3_timer.getElapsedTime()-compute_us*count/1000.0);
+        printf("\nP3, Async Write Time %f, Sync Write time %f\n",  p3_async_time, p3_timer.getElapsedTime());
     }
     MPI_Barrier(MPI_COMM_WORLD);
     write_client.FinalizeClient();
