@@ -48,4 +48,10 @@ target_link_libraries(real_app_elastic_2 ${LIBS} rhea scs_io_common sentinel)
 
 
 
+add_executable(real_app_elastic_3 real_apps/test3.cpp)
+add_dependencies(real_app_elastic_3 scs_io_common sentinel)
+target_link_libraries(real_app_elastic_3 ${LIBS} rhea scs_io_common sentinel)
+
+
+
 add_test(NAME rhea_client_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/rhea_client_test_exec)
